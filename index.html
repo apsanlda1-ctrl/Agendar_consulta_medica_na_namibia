@@ -8,7 +8,16 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans">
 
-    <!-- Header -->
+    <!-- Barra de Texto em Movimento (Direita para Esquerda) -->
+    <div class="bg-blue-950 text-white py-2 overflow-hidden whitespace-nowrap text-xs font-semibold shadow-inner">
+        <div class="inline-block animate-[marquee_25s_linear_infinite]">
+            <span>🩺 Não tem como marcar consulta? Deixa com a APSAN, LDA tratamos de todo processo na Namíbia para si &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp; </span>
+            <span>Atendimento garantido em Oshikango, Oshakati, Ondangua e Ongwediva &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp; </span>
+            <span>🩺 Não tem como marcar consulta? Deixa com a APSAN, LDA tratamos de todo processo na Namíbia para si</span>
+        </div>
+    </div>
+
+    <!-- Header Principal -->
     <header class="bg-blue-900 text-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold">APSAN, LDA — Namíbia Medical</h1>
@@ -16,29 +25,44 @@
         </div>
     </header>
 
+    <!-- Vídeo Curto em Movimento (Ilustração de Consulta) -->
+    <div class="w-full bg-slate-900 flex justify-center overflow-hidden border-b border-slate-800">
+        <div class="max-w-4xl w-full h-48 md:h-64 relative">
+            <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-80">
+                <!-- Vídeo de demonstração de consulta médica profissional -->
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-doctor-talking-to-a-patient-in-an-office-41566-large.mp4" type="video/mp4">
+                O seu navegador não suporta vídeos.
+            </video>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent flex items-end p-4">
+                <span class="text-white text-xs md:text-sm font-medium bg-black bg-opacity-50 px-3 py-1 rounded-full backdrop-blur-sm">
+                    ✨ Acompanhamento profissional e direto no consultório na Namíbia
+                </span>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Container -->
     <main class="max-w-4xl mx-auto px-4 py-8 space-y-8">
         
         <!-- Hero Section -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-center">
             <h2 class="text-2xl font-bold text-blue-900 mb-2">Marque a sua Consulta Médica na Namíbia</h2>
-            <p class="text-slate-600">Atendimento especializado no norte da Namíbia (Oshikango até Oshakati) com agendamento presencial garantido pela nossa equipa.</p>
+            <p class="text-slate-600">Atendimento especializado no norte da Namíbia com agendamento presencial garantido pela nossa equipa.</p>
         </div>
 
         <!-- Secção: Consultar Estado da Marcação -->
         <div class="bg-blue-50 border border-blue-200 p-6 rounded-xl shadow-sm">
-            <h3 class="text-lg font-bold text-blue-900 mb-2">🔍 Já fez uma marcação? Consulte o seu Estado</h3>
-            <p class="text-sm text-slate-600 mb-4">Introduza o seu nome completo e telemóvel para verificar a resposta da agenda e o estado:</p>
+            <h3 class="text-lg font-bold text-blue-900 mb-2">🔍 Consulte o Estado da sua Marcação</h3>
+            <p class="text-sm text-slate-600 mb-4">Insira o seu nome completo e telemóvel para visualizar a resposta e a observação detalhada enviada pelo administrador:</p>
             
             <form id="check-status-form" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                 <input type="text" id="check-name" placeholder="Nome Completo" required class="border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 <input type="text" id="check-phone" placeholder="Telemóvel (ex: 931057760)" required class="border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">Ver Estado</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">Consultar Estado</button>
             </form>
 
-            <!-- Resultado da Consulta de Estado -->
             <div id="status-result-box" class="hidden bg-white border p-4 rounded-lg text-sm">
-                <!-- Preenchido via JavaScript -->
+                <!-- Resultado injetado via JS -->
             </div>
         </div>
 
@@ -101,16 +125,16 @@
             </form>
         </div>
 
-        <!-- Step 2: Resumo Financeiro e Área de Pagamento com Temporizador (Oculta inicialmente) -->
+        <!-- Step 2: Resumo Financeiro e Pagamento com Cronómetro Regressivo em Movimento -->
         <div id="payment-section" class="hidden bg-white p-6 rounded-xl shadow-sm border border-slate-100">
             
-            <!-- Caixa do Temporizador de 45 Minutos -->
+            <!-- Relógio Regressivo Dinâmico (45 para 00) -->
             <div class="bg-rose-50 border border-rose-200 p-4 rounded-xl mb-6 flex flex-col md:flex-row items-center justify-between text-center md:text-left">
                 <div>
-                    <h4 class="font-bold text-rose-900 text-sm">⚠️ Tempo Limite para Envio do Comprovativo</h4>
-                    <p class="text-xs text-rose-700">Se o talão não for submetido dentro deste prazo, o formulário será reiniciado.</p>
+                    <h4 class="font-bold text-rose-900 text-sm">⏱️ Tempo Restante para Enviar o Comprovativo</h4>
+                    <p class="text-xs text-rose-700">O formulário será reiniciado automaticamente se o tempo esgotar.</p>
                 </div>
-                <div id="timer-display" class="mt-3 md:mt-0 bg-rose-600 text-white px-4 py-2 rounded-lg font-mono text-xl font-bold tracking-wider shadow-inner">
+                <div id="timer-display" class="mt-3 md:mt-0 bg-rose-600 text-white px-5 py-2.5 rounded-lg font-mono text-2xl font-bold tracking-widest shadow-inner animate-pulse">
                     45:00
                 </div>
             </div>
@@ -131,9 +155,6 @@
                     <span>Total a Pagar:</span>
                     <span class="text-right">600 NAD (37.000 Kz)</span>
                 </div>
-                <p class="text-xs text-amber-800 mt-3 pt-2 border-t border-amber-200 italic">
-                    ℹ️ <strong>Nota Importante:</strong> Ao efetuar o pagamento, a nossa equipa desloca-se fisicamente ao terreno para efetivar e garantir a marcação.
-                </p>
             </div>
 
             <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6 text-sm space-y-2">
@@ -144,7 +165,7 @@
 
             <form id="payment-form" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Anexar Comprovativo de Pagamento (Talão / Captura Express)</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Anexar Comprovativo de Pagamento (Talão)</label>
                     <input type="file" id="receipt-file" accept="image/*,application/pdf" required class="w-full border border-slate-300 rounded-lg p-2 bg-slate-50">
                 </div>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition-colors">
@@ -153,15 +174,23 @@
             </form>
         </div>
 
-        <!-- Step 3: Estado da Marcação (Oculta inicialmente) -->
+        <!-- Step 3: Confirmação de Submissão -->
         <div id="status-section" class="hidden bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-center py-8">
             <div class="text-emerald-600 text-4xl mb-2">✅</div>
             <h3 class="text-xl font-bold text-slate-800 mb-2">Comprovativo Submetido com Sucesso!</h3>
-            <p class="text-slate-600 max-w-md mx-auto mb-4">A nossa equipa recebeu o seu talão. Poderá consultar a resposta e o estado da agenda a qualquer momento na página principal usando o seu nome e telemóvel.</p>
-            <button onclick="location.reload()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">Fazer nova marcação</button>
+            <p class="text-slate-600 max-w-md mx-auto mb-4">A nossa equipa já recebeu o seu talão. Pode consultar a resposta do administrador a qualquer momento introduzindo o seu nome e telemóvel no topo desta página.</p>
+            <button onclick="location.reload()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">Fazer Nova Marcação</button>
         </div>
 
     </main>
+
+    <!-- Estilo para o letreiro em movimento (Marquee) -->
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
 
     <script src="app.js"></script>
 </body>
