@@ -1,3 +1,5 @@
+let paymentTimerInterval = null;
+
 document.addEventListener("DOMContentLoaded", () => {
     const appointmentForm = document.getElementById("appointment-form");
     const paymentForm = document.getElementById("payment-form");
@@ -30,6 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.getElementById("booking-section").classList.add("hidden");
             document.getElementById("payment-section").classList.remove("hidden");
+
+            // Inicia o temporizador regressivo de 45 minutos em movimento
+            startPaymentTimer(2700);
         });
     }
 
@@ -43,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const reader = new FileReader();
 
                 reader.onload = function(uploadEvent) {
+                    if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+
                     let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
                     
                     currentBooking.receiptName = file.name;
@@ -101,13 +108,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             <p><strong>Telemóvel:</strong> +244 ${found.phone}</p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 mt-2">
-                            <p class="text-xs font-bold text-blue-900 mb-1">📋 Resposta e Observação da Agenda (Administração):</p>
+                            <p class="text-xs font-bold text-blue-900 mb-1">📋 Resposta da Agenda / Observação do Administrador:</p>
                             <p class="text-xs text-slate-700 whitespace-pre-line">${found.observation || 'Ainda sem observações detalhadas da equipa.'}</p>
                         </div>
                     </div>
                 `;
             } else {
-                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center py-2">Nenhum registo encontrado para este Nome e Telemóvel. Verifique se os dados estão corretos ou se já concluiu a submissão.</p>`;
+                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center py-2">Nenhum registo encontrado para este Nome e Telemóvel. Verifique se os dados estão corretos ou se concluiu a submissão.</p>`;
             }
         });
     }
@@ -117,6 +124,33 @@ document.addEventListener("DOMContentLoaded", () => {
         renderAdminTable();
     }
 });
+
+// Temporizador Regressivo Dinâmico (45 minutos para 00)
+function startPaymentTimer(durationInSeconds) {
+    let timer = durationInSeconds;
+    const display = document.getElementById("timer-display");
+
+    if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+
+    paymentTimerInterval = setInterval(() => {
+        let minutes = parseInt(timer / 60, 10);
+        let seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        if (display) {
+            display.textContent = minutes + ":" + seconds;
+        }
+
+        if (--timer < 0) {
+            clearInterval(paymentTimerInterval);
+            alert("O tempo limite de 45 minutos para efetuar o pagamento expirou. O formulário foi reiniciado.");
+            localStorage.removeItem("currentBooking");
+            location.reload();
+        }
+    }, 1000);
+}
 
 function renderAdminTable() {
     const adminTableBody = document.getElementById("admin-table-body");
@@ -150,12 +184,12 @@ function renderAdminTable() {
                 </button>
             </td>
             <td class="p-4 align-top">
-                <textarea id="obs-${index}" rows="3" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Escreva aqui a resposta sobre a agenda, data de atendimento ou instruções...">${booking.observation || ''}</textarea>
+                <textarea id="obs-${index}" rows="3" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Escreva livremente a resposta sobre a agenda, data ou instruções para o paciente...">${booking.observation || ''}</textarea>
             </td>
             <td class="p-4 align-top space-y-2 whitespace-nowrap">
-                <button onclick="saveAdminResponse(${index}, 'Aprovado')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Aprovar e Enviar Resposta</button>
-                <button onclick="saveAdminResponse(${index}, 'Rejeitado')" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Rejeitar / Pedir Ajuste</button>
-                <button onclick="deleteBooking(${index})" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Eliminar Registo</button>
+                <button onclick="saveAdminResponse(${index}, 'Aprovado')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Aprovar e Enviar</button>
+                <button onclick="saveAdminResponse(${index}, 'Rejeitado')" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Rejeitar / Ajustar</button>
+                <button onclick="deleteBooking(${index})" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Eliminar</button>
             </td>
         `;
         adminTableBody.appendChild(row);
@@ -170,7 +204,7 @@ function saveAdminResponse(index, newStatus) {
     allBookings[index].observation = obsText;
 
     localStorage.setItem("allBookings", JSON.stringify(allBookings));
-    alert(`Resposta da agenda e estado (${newStatus}) guardados com sucesso! O paciente já pode consultar esta informação na página principal.`);
+    alert(`Resposta guardada com sucesso! O estado (${newStatus}) e a observação já estão visíveis para o paciente.`);
     renderAdminTable();
 }
 
