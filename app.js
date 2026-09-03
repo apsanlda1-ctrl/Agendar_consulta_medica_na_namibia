@@ -3,13 +3,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const paymentForm = document.getElementById("payment-form");
     const checkStatusForm = document.getElementById("check-status-form");
     
-    let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
+    // Garante que o objeto temporário existe no localStorage
+    if (!localStorage.getItem("currentBooking")) {
+        localStorage.setItem("currentBooking", JSON.stringify({}));
+    }
 
     if (appointmentForm) {
         appointmentForm.addEventListener("submit", (e) => {
             e.preventDefault();
             
-            currentBooking = {
+            const newBooking = {
                 id: Date.now(),
                 name: document.getElementById("patient-name").value.trim(),
                 phone: document.getElementById("patient-phone").value.trim(),
@@ -19,10 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 date: document.getElementById("appointment-date").value,
                 total: "600 NAD (37.000 Kz)",
                 status: "A aguardar validação",
-                observation: "O seu talão foi submetido e está a ser verificado pela nossa equipa."
+                observation: "O seu talão foi submetido e está a ser verificado pela nossa equipa.",
+                receiptName: "",
+                receiptData: ""
             };
 
-            localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
+            localStorage.setItem("currentBooking", JSON.stringify(newBooking));
 
             document.getElementById("booking-section").classList.add("hidden");
             document.getElementById("payment-section").classList.remove("hidden");
@@ -39,12 +44,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 const reader = new FileReader();
 
                 reader.onload = function(uploadEvent) {
+                    let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
+                    
                     currentBooking.receiptName = file.name;
                     currentBooking.receiptData = uploadEvent.target.result;
+                    currentBooking.status = "A aguardar validação";
+                    currentBooking.observation = "Comprovativo recebido. Aguarde a validação da equipa (até 1 hora).";
 
+                    // Insere de imediato na lista global de marcações do painel admin
                     let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-                    allBookings.push(currentBooking);
+                    
+                    // Verifica se já existe pelo ID para evitar duplicados, senão adiciona
+                    const existingIndex = allBookings.findIndex(b => b.id === currentBooking.id);
+                    if (existingIndex >= 0) {
+                        allBookings[existingIndex] = currentBooking;
+                    } else {
+                        allBookings.push(currentBooking);
+                    }
+
                     localStorage.setItem("allBookings", JSON.stringify(allBookings));
+                    localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
 
                     document.getElementById("payment-section").classList.add("hidden");
                     document.getElementById("status-section").classList.remove("hidden");
@@ -55,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Funcionalidade do Paciente Consultar Estado por Nome e Telemóvel
+    // Consulta de Estado pelo Paciente (Nome e Telemóvel)
     if (checkStatusForm) {
         checkStatusForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -63,7 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const searchPhone = document.getElementById("check-phone").value.trim();
 
             let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-            const found = allBookings.find(b => b.name.toLowerCase() === searchName && b.phone === searchPhone);
+            
+            // Procura o registo correspondente na base de dados global
+            const found = allBookings.find(b => b.name && b.name.toLowerCase() === searchName && b.phone === searchPhone);
 
             const resultBox = document.getElementById("status-result-box");
             resultBox.classList.remove("hidden");
@@ -88,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
             } else {
-                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center">Nenhuma marcação encontrada com este Nome e Telemóvel. Verifique os dados introduzidos.</p>`;
+                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center">Nenhuma marcação encontrada com este Nome e Telemóvel. Verifique se concluiu a submissão do comprovativo.</p>`;
             }
         });
     }
@@ -126,7 +147,7 @@ function renderAdminTable() {
             </td>
             <td class="p-4 text-xs text-slate-600 font-medium">${booking.date}</td>
             <td class="p-4">
-                <button onclick="viewReceipt('${encodeURIComponent(booking.receiptData)}', '${booking.receiptName}')" class="text-blue-600 underline text-xs font-semibold">
+                <button onclick="viewReceipt('${encodeURIComponent(booking.receiptData || '')}', '${booking.receiptName || 'Ficheiro'}')" class="text-blue-600 underline text-xs font-semibold">
                     ${booking.receiptName || 'Ver Ficheiro'}
                 </button>
             </td>
@@ -151,7 +172,7 @@ function updateStatus(index, newStatus) {
     allBookings[index].observation = obsText;
 
     localStorage.setItem("allBookings", JSON.stringify(allBookings));
-    alert(`Estado alterado para "${newStatus}" com sucesso! O paciente já poderá consultar esta atualização no site.`);
+    alert(`Estado alterado para "${newStatus}" com sucesso! A observação e o estado já estão disponíveis para consulta pelo paciente.`);
     renderAdminTable();
 }
 
@@ -159,7 +180,13 @@ function viewReceipt(dataUrl, fileName) {
     const modal = document.getElementById("receipt-modal");
     const contentArea = document.getElementById("modal-content-area");
     
-    decodedUrl = decodeURIComponent(dataUrl);
+    if (!dataUrl || dataUrl === "undefined") {
+        contentArea.innerHTML = `<p class="text-sm text-slate-600">Nenhum ficheiro carregado.</p>`;
+        modal.classList.remove("hidden");
+        return;
+    }
+
+    const decodedUrl = decodeURIComponent(dataUrl);
     if (decodedUrl.startsWith("data:image")) {
         contentArea.innerHTML = `<img src="${decodedUrl}" alt="${fileName}" class="max-h-[60vh] rounded border">`;
     } else {
