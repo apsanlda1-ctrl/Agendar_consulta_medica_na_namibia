@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const appointmentForm = document.getElementById("appointment-form");
     const paymentForm = document.getElementById("payment-form");
+    const loginForm = document.getElementById("login-form");
     
-    // Armazenamento temporário de dados na sessão do browser (LocalStorage)
     let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
 
     if (appointmentForm) {
@@ -13,14 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: Date.now(),
                 name: document.getElementById("patient-name").value,
                 phone: document.getElementById("patient-phone").value,
+                region: document.getElementById("region-select").value,
+                clinic: document.getElementById("clinic-select").value,
                 doctor: document.getElementById("doctor-select").value,
                 date: document.getElementById("appointment-date").value,
+                total: "600 NAD (37.000 Kz)",
                 status: "Pendente"
             };
 
             localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
 
-            // Transição de ecrã no frontend
             document.getElementById("booking-section").classList.add("hidden");
             document.getElementById("payment-section").classList.remove("hidden");
         });
@@ -32,28 +34,56 @@ document.addEventListener("DOMContentLoaded", () => {
             const fileInput = document.getElementById("receipt-file");
             
             if (fileInput.files.length > 0) {
-                // Guardamos o nome do ficheiro simulando o talão
-                currentBooking.receipt = fileInput.files[0].name;
-                currentBooking.status = "A aguardar validação";
+                const file = fileInput.files[0];
+                const reader = new FileReader();
 
-                // Salvar na lista geral de marcações do admin
-                let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-                allBookings.push(currentBooking);
-                localStorage.setItem("allBookings", JSON.stringify(allBookings));
+                reader.onload = function(uploadEvent) {
+                    currentBooking.receiptName = file.name;
+                    currentBooking.receiptData = uploadEvent.target.result; // Salva a imagem em base64 para o admin ver
+                    currentBooking.status = "A aguardar validação";
 
-                // Mudar para o estado final de espera
-                document.getElementById("payment-section").classList.add("hidden");
-                document.getElementById("status-section").classList.remove("hidden");
+                    let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+                    allBookings.push(currentBooking);
+                    localStorage.setItem("allBookings", JSON.stringify(allBookings));
+
+                    document.getElementById("payment-section").classList.add("hidden");
+                    document.getElementById("status-section").classList.remove("hidden");
+                };
+
+                reader.readAsDataURL(file);
             }
         });
     }
 
-    // Lógica do Painel Administrativo
+    // Sistema de Login Admin simples (Passe: apsan2026)
+    if (loginForm) {
+        const isAdminLoggedIn = sessionStorage.getItem("adminLoggedIn");
+        if (isAdminLoggedIn === "true") {
+            document.getElementById("login-overlay").classList.add("hidden");
+        }
+
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const pass = document.getElementById("admin-password").value;
+            if (pass === "apsan2026") {
+                sessionStorage.setItem("adminLoggedIn", "true");
+                document.getElementById("login-overlay").classList.add("hidden");
+            } else {
+                alert("Palavra-passe incorreta!");
+            }
+        });
+    }
+
     const adminTableBody = document.getElementById("admin-table-body");
     if (adminTableBody) {
         renderAdminTable();
     }
 });
+
+function logoutAdmin() {
+    sessionStorage.removeItem("adminLoggedIn");
+    location.reload();
+}
 
 function renderAdminTable() {
     const adminTableBody = document.getElementById("admin-table-body");
@@ -73,11 +103,17 @@ function renderAdminTable() {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td class="p-4 font-medium text-slate-900">${booking.name}</td>
-            <td class="p-4 text-slate-600">${booking.phone}</td>
+            <td class="p-4 text-slate-600">+244 ${booking.phone}</td>
+            <td class="p-4 text-slate-600">${booking.region} <br><span class="text-xs text-blue-600">${booking.clinic}</span></td>
             <td class="p-4 text-slate-600">${booking.doctor}</td>
             <td class="p-4 text-slate-600">${booking.date}</td>
-            <td class="p-4"><span class="text-blue-600 underline text-xs font-semibold cursor-pointer">${booking.receipt || 'Ver Ficheiro'}</span></td>
-            <td class="p-4 space-x-2">
+            <td class="p-4 font-semibold text-blue-900">${booking.total}</td>
+            <td class="p-4">
+                <button onclick="viewReceipt('${encodeURIComponent(booking.receiptData)}', '${booking.receiptName}')" class="text-blue-600 underline text-xs font-semibold">
+                    ${booking.receiptName || 'Ver Comprovativo'}
+                </button>
+            </td>
+            <td class="p-4 space-x-2 whitespace-nowrap">
                 <button onclick="approveBooking(${index})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold">Aprovar</button>
                 <button onclick="rejectBooking(${index})" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-semibold">Rejeitar</button>
             </td>
@@ -86,9 +122,26 @@ function renderAdminTable() {
     });
 }
 
+function viewReceipt(dataUrl, fileName) {
+    const modal = document.getElementById("receipt-modal");
+    const contentArea = document.getElementById("modal-content-area");
+    
+    decodedUrl = decodeURIComponent(dataUrl);
+    if (decodedUrl.startsWith("data:image")) {
+        contentArea.innerHTML = `<img src="${decodedUrl}" alt="${fileName}" class="max-h-[60vh] rounded border">`;
+    } else {
+        contentArea.innerHTML = `<p class="text-sm text-slate-600">Ficheiro carregado: <strong>${fileName}</strong></p>`;
+    }
+    modal.classList.remove("hidden");
+}
+
+function closeModal() {
+    document.getElementById("receipt-modal").classList.add("hidden");
+}
+
 function approveBooking(index) {
     let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-    alert(`Consulta de ${allBookings[index].name} aprovada com sucesso! O sistema dispararia o SMS/WhatsApp de confirmação.`);
+    alert(`Consulta de ${allBookings[index].name} aprovada! A equipa será notificada para realizar a marcação presencial na Namíbia.`);
     allBookings.splice(index, 1);
     localStorage.setItem("allBookings", JSON.stringify(allBookings));
     renderAdminTable();
@@ -96,7 +149,7 @@ function approveBooking(index) {
 
 function rejectBooking(index) {
     let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-    alert(`Comprovativo rejeitado. Será solicitado um novo talão ao paciente.`);
+    alert(`Comprovativo rejeitado. O registo foi removido para correção pelo paciente.`);
     allBookings.splice(index, 1);
     localStorage.setItem("allBookings", JSON.stringify(allBookings));
     renderAdminTable();
