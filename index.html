@@ -1,156 +1,216 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APSAN, LDA — Consultas Médicas na Namíbia</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 text-slate-800 font-sans">
+document.addEventListener("DOMContentLoaded", () => {
+    const appointmentForm = document.getElementById("appointment-form");
+    const paymentForm = document.getElementById("payment-form");
+    const checkStatusForm = document.getElementById("check-status-form");
+    
+    if (!localStorage.getItem("currentBooking")) {
+        localStorage.setItem("currentBooking", JSON.stringify({}));
+    }
 
-    <!-- Header -->
-    <header class="bg-blue-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold">APSAN, LDA — Namíbia Medical</h1>
-            <a href="admin.html" class="text-xs bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded text-white font-medium transition-colors">🔐 Painel Equipa</a>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        
-        <!-- Hero Section -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-center">
-            <h2 class="text-2xl font-bold text-blue-900 mb-2">Marque a sua Consulta Médica na Namíbia</h2>
-            <p class="text-slate-600">Atendimento especializado no norte da Namíbia (Oshikango até Oshakati) com agendamento presencial garantido pela nossa equipa.</p>
-        </div>
-
-        <!-- Secção: Consultar Estado da Marcação (Sem necessidade de email) -->
-        <div class="bg-blue-50 border border-blue-200 p-6 rounded-xl shadow-sm">
-            <h3 class="text-lg font-bold text-blue-900 mb-2">🔍 Já fez uma marcação? Consulte o seu Estado</h3>
-            <p class="text-sm text-slate-600 mb-4">Introduza o seu nome completo e telemóvel para verificar se o seu comprovativo já foi aprovado:</p>
+    if (appointmentForm) {
+        appointmentForm.addEventListener("submit", (e) => {
+            e.preventDefault();
             
-            <form id="check-status-form" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                <input type="text" id="check-name" placeholder="Nome Completo" required class="border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <input type="text" id="check-phone" placeholder="Telemóvel (ex: 931057760)" required class="border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors">Ver Estado</button>
-            </form>
+            const newBooking = {
+                id: Date.now(),
+                name: document.getElementById("patient-name").value.trim(),
+                phone: document.getElementById("patient-phone").value.trim(),
+                region: document.getElementById("region-select").value,
+                clinic: document.getElementById("clinic-select").value,
+                doctor: document.getElementById("doctor-select").value,
+                date: document.getElementById("appointment-date").value,
+                total: "600 NAD (37.000 Kz)",
+                status: "A aguardar validação",
+                observation: "O seu talão foi submetido e está a ser verificado pela nossa equipa.",
+                receiptName: "",
+                receiptData: ""
+            };
 
-            <!-- Resultado da Consulta de Estado -->
-            <div id="status-result-box" class="hidden bg-white border p-4 rounded-lg text-sm">
-                <!-- Preenchido via JavaScript -->
-            </div>
-        </div>
+            localStorage.setItem("currentBooking", JSON.stringify(newBooking));
 
-        <!-- Step 1: Formulário de Agendamento -->
-        <div id="booking-section" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h3 class="text-lg font-semibold text-blue-900 mb-4">1. Dados do Paciente, Região e Especialidade</h3>
-            <form id="appointment-form" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nome Completo</label>
-                        <input type="text" id="patient-name" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Telemóvel (Angola +244)</label>
-                        <div class="flex">
-                            <span class="bg-slate-100 border border-r-0 border-slate-300 rounded-l-lg p-2.5 text-slate-600 text-sm">+244</span>
-                            <input type="text" id="patient-phone" placeholder="9XX XXX XXX" required class="w-full border border-slate-300 rounded-r-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            document.getElementById("booking-section").classList.add("hidden");
+            document.getElementById("payment-section").classList.remove("hidden");
+        });
+    }
+
+    if (paymentForm) {
+        paymentForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById("receipt-file");
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(uploadEvent) {
+                    let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
+                    
+                    currentBooking.receiptName = file.name;
+                    currentBooking.receiptData = uploadEvent.target.result;
+                    currentBooking.status = "A aguardar validação";
+                    currentBooking.observation = "Comprovativo submetido com sucesso. Aguarde a validação e as instruções da agenda pela equipa.";
+
+                    let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+                    const existingIndex = allBookings.findIndex(b => b.id === currentBooking.id);
+                    if (existingIndex >= 0) {
+                        allBookings[existingIndex] = currentBooking;
+                    } else {
+                        allBookings.push(currentBooking);
+                    }
+
+                    localStorage.setItem("allBookings", JSON.stringify(allBookings));
+                    localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
+
+                    document.getElementById("payment-section").classList.add("hidden");
+                    document.getElementById("status-section").classList.remove("hidden");
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Consulta de Estado pelo Paciente na Página Principal
+    if (checkStatusForm) {
+        checkStatusForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const searchName = document.getElementById("check-name").value.trim().toLowerCase();
+            const searchPhone = document.getElementById("check-phone").value.trim();
+
+            let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+            const found = allBookings.find(b => b.name && b.name.toLowerCase() === searchName && b.phone === searchPhone);
+
+            const resultBox = document.getElementById("status-result-box");
+            resultBox.classList.remove("hidden");
+
+            if (found) {
+                let badgeColor = "text-amber-600 bg-amber-50 border-amber-200";
+                if (found.status === "Aprovado") badgeColor = "text-emerald-700 bg-emerald-50 border-emerald-200";
+                if (found.status === "Rejeitado") badgeColor = "text-rose-700 bg-rose-50 border-rose-200";
+
+                resultBox.innerHTML = `
+                    <div class="space-y-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-bold text-slate-900 text-base">Paciente: ${found.name}</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeColor}">${found.status}</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-600">
+                            <p><strong>Especialidade:</strong> ${found.doctor}</p>
+                            <p><strong>Local:</strong> ${found.clinic} (${found.region})</p>
+                            <p><strong>Data Pretendida:</strong> ${found.date}</p>
+                            <p><strong>Telemóvel:</strong> +244 ${found.phone}</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 mt-2">
+                            <p class="text-xs font-bold text-blue-900 mb-1">📋 Resposta e Observação da Agenda (Administração):</p>
+                            <p class="text-xs text-slate-700 whitespace-pre-line">${found.observation || 'Ainda sem observações detalhadas da equipa.'}</p>
                         </div>
                     </div>
-                </div>
+                `;
+            } else {
+                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center py-2">Nenhum registo encontrado para este Nome e Telemóvel. Verifique se os dados estão corretos ou se já concluiu a submissão.</p>`;
+            }
+        });
+    }
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Região / Localidade</label>
-                        <select id="region-select" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="Oshakati (Até 60km de Oshikango)">Oshakati (Até 60km de Oshikango)</option>
-                            <option value="Ondangua">Ondangua</option>
-                            <option value="Ongwediva">Ongwediva</option>
-                            <option value="Oshikango">Oshikango</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Clínica / Hospital</label>
-                        <select id="clinic-select" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="Oshakati Medical Centre">Oshakati Medical Centre</option>
-                            <option value="Ongwediva Medpark">Ongwediva Medpark</option>
-                            <option value="Ondangua Private Clinic">Ondangua Private Clinic</option>
-                            <option value="Welwitschia Hospital (Oshakati)">Welwitschia Hospital (Oshakati)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Especialidade / Médico</label>
-                        <select id="doctor-select" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="Dr. Nashandi (Clínico Geral)">Dr. Nashandi (Clínico Geral)</option>
-                            <option value="Dra. Shikongo (Pediatria)">Dra. Shikongo (Pediatria)</option>
-                            <option value="Dr. Van Wyk (Cardiologia)">Dr. Van Wyk (Cardiologia)</option>
-                            <option value="Dra. Amutenya (Ginecologia)">Dra. Amutenya (Ginecologia)</option>
-                        </select>
-                    </div>
-                </div>
+    const adminTableBody = document.getElementById("admin-table-body");
+    if (adminTableBody) {
+        renderAdminTable();
+    }
+});
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Data Pretendida para a Consulta</label>
-                    <input type="date" id="appointment-date" required class="w-full md:w-1/2 border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
+function renderAdminTable() {
+    const adminTableBody = document.getElementById("admin-table-body");
+    const noData = document.getElementById("no-data");
+    let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
 
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors">
-                    Avançar para Resumo e Pagamento
+    adminTableBody.innerHTML = "";
+
+    if (allBookings.length === 0) {
+        noData.classList.remove("hidden");
+        return;
+    } else {
+        noData.classList.add("hidden");
+    }
+
+    allBookings.forEach((booking, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td class="p-4 align-top">
+                <strong class="text-slate-900">${booking.name}</strong><br>
+                <span class="text-xs text-slate-500">+244 ${booking.phone}</span>
+            </td>
+            <td class="p-4 align-top text-xs text-slate-600">
+                <strong>${booking.doctor}</strong><br>
+                ${booking.clinic} (${booking.region})<br>
+                <span class="text-slate-500">Data: ${booking.date}</span>
+            </td>
+            <td class="p-4 align-top">
+                <button onclick="viewReceipt('${encodeURIComponent(booking.receiptData || '')}', '${booking.receiptName || 'Ficheiro'}')" class="text-blue-600 underline text-xs font-semibold">
+                    ${booking.receiptName || 'Ver Ficheiro'}
                 </button>
-            </form>
-        </div>
+            </td>
+            <td class="p-4 align-top">
+                <textarea id="obs-${index}" rows="3" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Escreva aqui a resposta sobre a agenda, data de atendimento ou instruções...">${booking.observation || ''}</textarea>
+            </td>
+            <td class="p-4 align-top space-y-2 whitespace-nowrap">
+                <button onclick="saveAdminResponse(${index}, 'Aprovado')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Aprovar e Enviar Resposta</button>
+                <button onclick="saveAdminResponse(${index}, 'Rejeitado')" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Rejeitar / Pedir Ajuste</button>
+                <button onclick="deleteBooking(${index})" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Eliminar Registo</button>
+            </td>
+        `;
+        adminTableBody.appendChild(row);
+    });
+}
 
-        <!-- Step 2: Resumo Financeiro e Área de Pagamento (Oculta inicialmente) -->
-        <div id="payment-section" class="hidden bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h3 class="text-lg font-semibold text-blue-900 mb-3">2. Resumo de Custos e Pagamento</h3>
-            
-            <div class="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6 text-sm space-y-2 text-slate-700">
-                <p class="font-semibold text-amber-900">Detalhe dos Valores:</p>
-                <div class="grid grid-cols-2 gap-2 border-b border-amber-200 pb-2">
-                    <span>Valor da Consulta:</span>
-                    <span class="font-bold text-right">400 NAD (24.000 Kz)</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b border-amber-200 pb-2">
-                    <span>Taxa de Serviço APSAN:</span>
-                    <span class="font-bold text-right">200 NAD (13.000 Kz)</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 pt-1 text-base text-blue-900 font-bold">
-                    <span>Total a Pagar:</span>
-                    <span class="text-right">600 NAD (37.000 Kz)</span>
-                </div>
-                <p class="text-xs text-amber-800 mt-3 pt-2 border-t border-amber-200 italic">
-                    ℹ️ <strong>Nota Importante:</strong> Ao efetuar o pagamento, a nossa equipa desloca-se fisicamente ao terreno (clínica na Namíbia) para efetivar e garantir a marcação. Quando chegar o dia, é só entrar diretamente no consultório!
-                </p>
-            </div>
+function saveAdminResponse(index, newStatus) {
+    let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+    const obsText = document.getElementById(`obs-${index}`).value.trim();
 
-            <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6 text-sm space-y-2">
-                <p class="font-semibold text-blue-900 mb-1">Dados Bancários da APSAN, LDA:</p>
-                <p><strong>Transferência Bancária (IBAN):</strong> <span class="font-mono bg-white px-2 py-1 rounded border border-blue-100 select-all">AO06 0000 635030 2130157</span></p>
-                <p><strong>Multicaixa Express (Telemóvel):</strong> <span class="font-mono bg-white px-2 py-1 rounded border border-blue-100 select-all">931057760</span></p>
-            </div>
+    allBookings[index].status = newStatus;
+    allBookings[index].observation = obsText;
 
-            <form id="payment-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Anexar Comprovativo de Pagamento (Talão / Captura Express)</label>
-                    <input type="file" id="receipt-file" accept="image/*,application/pdf" required class="w-full border border-slate-300 rounded-lg p-2 bg-slate-50">
-                </div>
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition-colors">
-                    Submeter Comprovativo (Validação em até 1 hora)
-                </button>
-            </form>
-        </div>
+    localStorage.setItem("allBookings", JSON.stringify(allBookings));
+    alert(`Resposta da agenda e estado (${newStatus}) guardados com sucesso! O paciente já pode consultar esta informação na página principal.`);
+    renderAdminTable();
+}
 
-        <!-- Step 3: Estado da Marcação (Oculta inicialmente) -->
-        <div id="status-section" class="hidden bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-center py-8">
-            <div class="text-amber-600 text-4xl mb-2">⏳</div>
-            <h3 class="text-xl font-bold text-slate-800 mb-2">Comprovativo Submetido com Sucesso!</h3>
-            <p class="text-slate-600 max-w-md mx-auto mb-4">A nossa equipa está a analisar o seu talão. Poderá consultar o estado a qualquer momento na página principal usando o seu nome e telemóvel.</p>
-            <button onclick="location.reload()" class="text-sm text-blue-600 underline font-medium">Fazer nova marcação</button>
-        </div>
+function viewReceipt(dataUrl, fileName) {
+    const modal = document.getElementById("receipt-modal");
+    const contentArea = document.getElementById("modal-content-area");
+    
+    if (!dataUrl || dataUrl === "undefined") {
+        contentArea.innerHTML = `<p class="text-sm text-slate-600">Nenhum ficheiro carregado.</p>`;
+        modal.classList.remove("hidden");
+        return;
+    }
 
-    </main>
+    const decodedUrl = decodeURIComponent(dataUrl);
+    if (decodedUrl.startsWith("data:image")) {
+        contentArea.innerHTML = `<img src="${decodedUrl}" alt="${fileName}" class="max-h-[60vh] rounded border">`;
+    } else {
+        contentArea.innerHTML = `<p class="text-sm text-slate-600">Ficheiro carregado: <strong>${fileName}</strong></p>`;
+    }
+    modal.classList.remove("hidden");
+}
 
-    <script src="app.js"></script>
-</body>
-</html>
+function closeModal() {
+    document.getElementById("receipt-modal").classList.add("hidden");
+}
+
+function deleteBooking(index) {
+    if (confirm("Tem certeza que deseja eliminar permanentemente este registo?")) {
+        let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+        allBookings.splice(index, 1);
+        localStorage.setItem("allBookings", JSON.stringify(allBookings));
+        renderAdminTable();
+    }
+}
+
+function exportToPDF() {
+    let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+    if (allBookings.length === 0) {
+        alert("Não existem dados para exportar.");
+        return;
+    }
+    window.print();
+}
