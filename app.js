@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("currentBooking", JSON.stringify({}));
     }
 
+    // Passo 1: Submeter dados do agendamento e avançar para o pagamento
     if (appointmentForm) {
         appointmentForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -37,41 +38,55 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Passo 2: Submeter o comprovativo de pagamento
     if (paymentForm) {
         paymentForm.addEventListener("submit", (e) => {
             e.preventDefault();
             const fileInput = document.getElementById("receipt-file");
             
+            let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
+            
+            // Função para finalizar a gravação (com ou sem ficheiro físico carregado)
+            const saveAndFinish = (fileName, fileData) => {
+                if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+                
+                currentBooking.receiptName = fileName;
+                currentBooking.receiptData = fileData;
+                currentBooking.status = "A aguardar validação";
+                currentBooking.observation = "Comprovativo submetido com sucesso. Aguarde a validação e as instruções da agenda pela equipa.";
+
+                let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+                const existingIndex = allBookings.findIndex(b => b.id === currentBooking.id);
+                
+                if (existingIndex >= 0) {
+                    allBookings[existingIndex] = currentBooking;
+                } else {
+                    allBookings.push(currentBooking);
+                }
+
+                localStorage.setItem("allBookings", JSON.stringify(allBookings));
+                localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
+
+                document.getElementById("payment-section").classList.add("hidden");
+                document.getElementById("status-section").classList.remove("hidden");
+            };
+
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
 
                 reader.onload = function(uploadEvent) {
-                    if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+                    saveAndFinish(file.name, uploadEvent.target.result);
+                };
 
-                    let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
-                    
-                    currentBooking.receiptName = file.name;
-                    currentBooking.receiptData = uploadEvent.target.result;
-                    currentBooking.status = "A aguardar validação";
-                    currentBooking.observation = "Comprovativo submetido com sucesso. Aguarde a validação e as instruções da agenda pela equipa.";
-
-                    let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-                    const existingIndex = allBookings.findIndex(b => b.id === currentBooking.id);
-                    if (existingIndex >= 0) {
-                        allBookings[existingIndex] = currentBooking;
-                    } else {
-                        allBookings.push(currentBooking);
-                    }
-
-                    localStorage.setItem("allBookings", JSON.stringify(allBookings));
-                    localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
-
-                    document.getElementById("payment-section").classList.add("hidden");
-                    document.getElementById("status-section").classList.remove("hidden");
+                reader.onerror = function() {
+                    // Fallback caso ocorra erro na leitura do ficheiro
+                    saveAndFinish(file.name, "");
                 };
 
                 reader.readAsDataURL(file);
+            } else {
+                saveAndFinish("Sem Ficheiro", "");
             }
         });
     }
