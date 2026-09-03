@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const appointmentForm = document.getElementById("appointment-form");
     const paymentForm = document.getElementById("payment-form");
-    const loginForm = document.getElementById("login-form");
+    const checkStatusForm = document.getElementById("check-status-form");
     
     let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
 
@@ -11,14 +11,15 @@ document.addEventListener("DOMContentLoaded", () => {
             
             currentBooking = {
                 id: Date.now(),
-                name: document.getElementById("patient-name").value,
-                phone: document.getElementById("patient-phone").value,
+                name: document.getElementById("patient-name").value.trim(),
+                phone: document.getElementById("patient-phone").value.trim(),
                 region: document.getElementById("region-select").value,
                 clinic: document.getElementById("clinic-select").value,
                 doctor: document.getElementById("doctor-select").value,
                 date: document.getElementById("appointment-date").value,
                 total: "600 NAD (37.000 Kz)",
-                status: "Pendente"
+                status: "A aguardar validação",
+                observation: "O seu talão foi submetido e está a ser verificado pela nossa equipa."
             };
 
             localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
@@ -39,8 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 reader.onload = function(uploadEvent) {
                     currentBooking.receiptName = file.name;
-                    currentBooking.receiptData = uploadEvent.target.result; // Salva a imagem em base64 para o admin ver
-                    currentBooking.status = "A aguardar validação";
+                    currentBooking.receiptData = uploadEvent.target.result;
 
                     let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
                     allBookings.push(currentBooking);
@@ -55,21 +55,40 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Sistema de Login Admin simples (Passe: apsan2026)
-    if (loginForm) {
-        const isAdminLoggedIn = sessionStorage.getItem("adminLoggedIn");
-        if (isAdminLoggedIn === "true") {
-            document.getElementById("login-overlay").classList.add("hidden");
-        }
-
-        loginForm.addEventListener("submit", (e) => {
+    // Funcionalidade do Paciente Consultar Estado por Nome e Telemóvel
+    if (checkStatusForm) {
+        checkStatusForm.addEventListener("submit", (e) => {
             e.preventDefault();
-            const pass = document.getElementById("admin-password").value;
-            if (pass === "apsan2026") {
-                sessionStorage.setItem("adminLoggedIn", "true");
-                document.getElementById("login-overlay").classList.add("hidden");
+            const searchName = document.getElementById("check-name").value.trim().toLowerCase();
+            const searchPhone = document.getElementById("check-phone").value.trim();
+
+            let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+            const found = allBookings.find(b => b.name.toLowerCase() === searchName && b.phone === searchPhone);
+
+            const resultBox = document.getElementById("status-result-box");
+            resultBox.classList.remove("hidden");
+
+            if (found) {
+                let badgeColor = "text-amber-600 bg-amber-50 border-amber-200";
+                if (found.status === "Aprovado") badgeColor = "text-emerald-700 bg-emerald-50 border-emerald-200";
+                if (found.status === "Rejeitado") badgeColor = "text-rose-700 bg-rose-50 border-rose-200";
+
+                resultBox.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-bold text-slate-800">Paciente: ${found.name}</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeColor}">${found.status}</span>
+                        </div>
+                        <p class="text-xs text-slate-600"><strong>Médico / Clínica:</strong> ${found.doctor} — ${found.clinic} (${found.region})</p>
+                        <p class="text-xs text-slate-600"><strong>Data da Consulta:</strong> ${found.date}</p>
+                        <div class="bg-slate-50 p-3 rounded border border-slate-200 mt-2">
+                            <p class="text-xs font-semibold text-slate-700">Observação da Equipa APSAN:</p>
+                            <p class="text-xs text-slate-600 mt-1">${found.observation || 'Sem observações adicionais.'}</p>
+                        </div>
+                    </div>
+                `;
             } else {
-                alert("Palavra-passe incorreta!");
+                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center">Nenhuma marcação encontrada com este Nome e Telemóvel. Verifique os dados introduzidos.</p>`;
             }
         });
     }
@@ -79,11 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
         renderAdminTable();
     }
 });
-
-function logoutAdmin() {
-    sessionStorage.removeItem("adminLoggedIn");
-    location.reload();
-}
 
 function renderAdminTable() {
     const adminTableBody = document.getElementById("admin-table-body");
@@ -102,24 +116,43 @@ function renderAdminTable() {
     allBookings.forEach((booking, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td class="p-4 font-medium text-slate-900">${booking.name}</td>
-            <td class="p-4 text-slate-600">+244 ${booking.phone}</td>
-            <td class="p-4 text-slate-600">${booking.region} <br><span class="text-xs text-blue-600">${booking.clinic}</span></td>
-            <td class="p-4 text-slate-600">${booking.doctor}</td>
-            <td class="p-4 text-slate-600">${booking.date}</td>
-            <td class="p-4 font-semibold text-blue-900">${booking.total}</td>
+            <td class="p-4">
+                <strong class="text-slate-900">${booking.name}</strong><br>
+                <span class="text-xs text-slate-500">+244 ${booking.phone}</span>
+            </td>
+            <td class="p-4 text-xs text-slate-600">
+                <strong>${booking.doctor}</strong><br>
+                ${booking.clinic} (${booking.region})
+            </td>
+            <td class="p-4 text-xs text-slate-600 font-medium">${booking.date}</td>
             <td class="p-4">
                 <button onclick="viewReceipt('${encodeURIComponent(booking.receiptData)}', '${booking.receiptName}')" class="text-blue-600 underline text-xs font-semibold">
-                    ${booking.receiptName || 'Ver Comprovativo'}
+                    ${booking.receiptName || 'Ver Ficheiro'}
                 </button>
             </td>
-            <td class="p-4 space-x-2 whitespace-nowrap">
-                <button onclick="approveBooking(${index})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold">Aprovar</button>
-                <button onclick="rejectBooking(${index})" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-semibold">Rejeitar</button>
+            <td class="p-4">
+                <textarea id="obs-${index}" rows="2" class="w-full border border-slate-300 rounded p-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none" placeholder="Escreva aqui a observação...">${booking.observation || ''}</textarea>
+            </td>
+            <td class="p-4 space-y-1 whitespace-nowrap">
+                <button onclick="updateStatus(${index}, 'Aprovado')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded text-xs font-semibold">Aprovar</button>
+                <button onclick="updateStatus(${index}, 'Rejeitado')" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-2 py-1 rounded text-xs font-semibold">Rejeitar</button>
+                <button onclick="deleteBooking(${index})" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-2 py-1 rounded text-xs font-semibold">Eliminar</button>
             </td>
         `;
         adminTableBody.appendChild(row);
     });
+}
+
+function updateStatus(index, newStatus) {
+    let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+    const obsText = document.getElementById(`obs-${index}`).value;
+
+    allBookings[index].status = newStatus;
+    allBookings[index].observation = obsText;
+
+    localStorage.setItem("allBookings", JSON.stringify(allBookings));
+    alert(`Estado alterado para "${newStatus}" com sucesso! O paciente já poderá consultar esta atualização no site.`);
+    renderAdminTable();
 }
 
 function viewReceipt(dataUrl, fileName) {
@@ -139,18 +172,20 @@ function closeModal() {
     document.getElementById("receipt-modal").classList.add("hidden");
 }
 
-function approveBooking(index) {
-    let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-    alert(`Consulta de ${allBookings[index].name} aprovada! A equipa será notificada para realizar a marcação presencial na Namíbia.`);
-    allBookings.splice(index, 1);
-    localStorage.setItem("allBookings", JSON.stringify(allBookings));
-    renderAdminTable();
+function deleteBooking(index) {
+    if (confirm("Tem certeza que deseja eliminar permanentemente este registo?")) {
+        let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+        allBookings.splice(index, 1);
+        localStorage.setItem("allBookings", JSON.stringify(allBookings));
+        renderAdminTable();
+    }
 }
 
-function rejectBooking(index) {
+function exportToPDF() {
     let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-    alert(`Comprovativo rejeitado. O registo foi removido para correção pelo paciente.`);
-    allBookings.splice(index, 1);
-    localStorage.setItem("allBookings", JSON.stringify(allBookings));
-    renderAdminTable();
+    if (allBookings.length === 0) {
+        alert("Não existem dados para exportar.");
+        return;
+    }
+    window.print();
 }
