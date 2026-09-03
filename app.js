@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const paymentForm = document.getElementById("payment-form");
     const checkStatusForm = document.getElementById("check-status-form");
     
-    // Garante que o objeto temporário existe no localStorage
     if (!localStorage.getItem("currentBooking")) {
         localStorage.setItem("currentBooking", JSON.stringify({}));
     }
@@ -49,12 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     currentBooking.receiptName = file.name;
                     currentBooking.receiptData = uploadEvent.target.result;
                     currentBooking.status = "A aguardar validação";
-                    currentBooking.observation = "Comprovativo recebido. Aguarde a validação da equipa (até 1 hora).";
+                    currentBooking.observation = "Comprovativo submetido com sucesso. Aguarde a validação e as instruções da agenda pela equipa.";
 
-                    // Insere de imediato na lista global de marcações do painel admin
                     let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-                    
-                    // Verifica se já existe pelo ID para evitar duplicados, senão adiciona
                     const existingIndex = allBookings.findIndex(b => b.id === currentBooking.id);
                     if (existingIndex >= 0) {
                         allBookings[existingIndex] = currentBooking;
@@ -74,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Consulta de Estado pelo Paciente (Nome e Telemóvel)
+    // Consulta de Estado pelo Paciente na Página Principal
     if (checkStatusForm) {
         checkStatusForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -82,8 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const searchPhone = document.getElementById("check-phone").value.trim();
 
             let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-            
-            // Procura o registo correspondente na base de dados global
             const found = allBookings.find(b => b.name && b.name.toLowerCase() === searchName && b.phone === searchPhone);
 
             const resultBox = document.getElementById("status-result-box");
@@ -95,21 +89,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (found.status === "Rejeitado") badgeColor = "text-rose-700 bg-rose-50 border-rose-200";
 
                 resultBox.innerHTML = `
-                    <div class="space-y-2">
+                    <div class="space-y-3 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
                         <div class="flex justify-between items-center border-b pb-2">
-                            <span class="font-bold text-slate-800">Paciente: ${found.name}</span>
+                            <span class="font-bold text-slate-900 text-base">Paciente: ${found.name}</span>
                             <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeColor}">${found.status}</span>
                         </div>
-                        <p class="text-xs text-slate-600"><strong>Médico / Clínica:</strong> ${found.doctor} — ${found.clinic} (${found.region})</p>
-                        <p class="text-xs text-slate-600"><strong>Data da Consulta:</strong> ${found.date}</p>
-                        <div class="bg-slate-50 p-3 rounded border border-slate-200 mt-2">
-                            <p class="text-xs font-semibold text-slate-700">Observação da Equipa APSAN:</p>
-                            <p class="text-xs text-slate-600 mt-1">${found.observation || 'Sem observações adicionais.'}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-600">
+                            <p><strong>Especialidade:</strong> ${found.doctor}</p>
+                            <p><strong>Local:</strong> ${found.clinic} (${found.region})</p>
+                            <p><strong>Data Pretendida:</strong> ${found.date}</p>
+                            <p><strong>Telemóvel:</strong> +244 ${found.phone}</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 mt-2">
+                            <p class="text-xs font-bold text-blue-900 mb-1">📋 Resposta e Observação da Agenda (Administração):</p>
+                            <p class="text-xs text-slate-700 whitespace-pre-line">${found.observation || 'Ainda sem observações detalhadas da equipa.'}</p>
                         </div>
                     </div>
                 `;
             } else {
-                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center">Nenhuma marcação encontrada com este Nome e Telemóvel. Verifique se concluiu a submissão do comprovativo.</p>`;
+                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center py-2">Nenhum registo encontrado para este Nome e Telemóvel. Verifique se os dados estão corretos ou se já concluiu a submissão.</p>`;
             }
         });
     }
@@ -137,42 +135,42 @@ function renderAdminTable() {
     allBookings.forEach((booking, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td class="p-4">
+            <td class="p-4 align-top">
                 <strong class="text-slate-900">${booking.name}</strong><br>
                 <span class="text-xs text-slate-500">+244 ${booking.phone}</span>
             </td>
-            <td class="p-4 text-xs text-slate-600">
+            <td class="p-4 align-top text-xs text-slate-600">
                 <strong>${booking.doctor}</strong><br>
-                ${booking.clinic} (${booking.region})
+                ${booking.clinic} (${booking.region})<br>
+                <span class="text-slate-500">Data: ${booking.date}</span>
             </td>
-            <td class="p-4 text-xs text-slate-600 font-medium">${booking.date}</td>
-            <td class="p-4">
+            <td class="p-4 align-top">
                 <button onclick="viewReceipt('${encodeURIComponent(booking.receiptData || '')}', '${booking.receiptName || 'Ficheiro'}')" class="text-blue-600 underline text-xs font-semibold">
                     ${booking.receiptName || 'Ver Ficheiro'}
                 </button>
             </td>
-            <td class="p-4">
-                <textarea id="obs-${index}" rows="2" class="w-full border border-slate-300 rounded p-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none" placeholder="Escreva aqui a observação...">${booking.observation || ''}</textarea>
+            <td class="p-4 align-top">
+                <textarea id="obs-${index}" rows="3" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Escreva aqui a resposta sobre a agenda, data de atendimento ou instruções...">${booking.observation || ''}</textarea>
             </td>
-            <td class="p-4 space-y-1 whitespace-nowrap">
-                <button onclick="updateStatus(${index}, 'Aprovado')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded text-xs font-semibold">Aprovar</button>
-                <button onclick="updateStatus(${index}, 'Rejeitado')" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-2 py-1 rounded text-xs font-semibold">Rejeitar</button>
-                <button onclick="deleteBooking(${index})" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-2 py-1 rounded text-xs font-semibold">Eliminar</button>
+            <td class="p-4 align-top space-y-2 whitespace-nowrap">
+                <button onclick="saveAdminResponse(${index}, 'Aprovado')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Aprovar e Enviar Resposta</button>
+                <button onclick="saveAdminResponse(${index}, 'Rejeitado')" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Rejeitar / Pedir Ajuste</button>
+                <button onclick="deleteBooking(${index})" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Eliminar Registo</button>
             </td>
         `;
         adminTableBody.appendChild(row);
     });
 }
 
-function updateStatus(index, newStatus) {
+function saveAdminResponse(index, newStatus) {
     let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-    const obsText = document.getElementById(`obs-${index}`).value;
+    const obsText = document.getElementById(`obs-${index}`).value.trim();
 
     allBookings[index].status = newStatus;
     allBookings[index].observation = obsText;
 
     localStorage.setItem("allBookings", JSON.stringify(allBookings));
-    alert(`Estado alterado para "${newStatus}" com sucesso! A observação e o estado já estão disponíveis para consulta pelo paciente.`);
+    alert(`Resposta da agenda e estado (${newStatus}) guardados com sucesso! O paciente já pode consultar esta informação na página principal.`);
     renderAdminTable();
 }
 
