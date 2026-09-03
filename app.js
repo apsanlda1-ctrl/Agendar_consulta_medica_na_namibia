@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("currentBooking", JSON.stringify({}));
     }
 
-    // Passo 1: Submeter dados do agendamento e avançar para o pagamento
+    // Passo 1: Submeter dados do agendamento
     if (appointmentForm) {
         appointmentForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -38,18 +38,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Passo 2: Submeter o comprovativo de pagamento
+    // Passo 2: Submeter o comprovativo de pagamento (Corrigido para garantir avanço imediato)
     if (paymentForm) {
         paymentForm.addEventListener("submit", (e) => {
             e.preventDefault();
-            const fileInput = document.getElementById("receipt-file");
             
+            const fileInput = document.getElementById("receipt-file");
             let currentBooking = JSON.parse(localStorage.getItem("currentBooking")) || {};
             
-            // Função para finalizar a gravação (com ou sem ficheiro físico carregado)
-            const saveAndFinish = (fileName, fileData) => {
-                if (paymentTimerInterval) clearInterval(paymentTimerInterval);
-                
+            if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+
+            // Função interna para guardar e avançar o ecrã
+            const finalizeSubmission = (fileName, fileData) => {
                 currentBooking.receiptName = fileName;
                 currentBooking.receiptData = fileData;
                 currentBooking.status = "A aguardar validação";
@@ -67,31 +67,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("allBookings", JSON.stringify(allBookings));
                 localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
 
+                // Esconde a secção de pagamento e mostra a de sucesso
                 document.getElementById("payment-section").classList.add("hidden");
                 document.getElementById("status-section").classList.remove("hidden");
             };
 
-            if (fileInput.files.length > 0) {
+            // Se o utilizador escolheu um ficheiro, tenta ler. Se falhar ou não houver, avança na mesma.
+            if (fileInput && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
 
                 reader.onload = function(uploadEvent) {
-                    saveAndFinish(file.name, uploadEvent.target.result);
+                    finalizeSubmission(file.name, uploadEvent.target.result);
                 };
 
                 reader.onerror = function() {
-                    // Fallback caso ocorra erro na leitura do ficheiro
-                    saveAndFinish(file.name, "");
+                    finalizeSubmission(file.name, "");
                 };
 
-                reader.readAsDataURL(file);
+                try {
+                    reader.readAsDataURL(file);
+                } catch (err) {
+                    finalizeSubmission(file.name, "");
+                }
             } else {
-                saveAndFinish("Sem Ficheiro", "");
+                finalizeSubmission("Comprovativo Digital", "");
             }
         });
     }
 
-    // Consulta de Estado pelo Paciente na Página Principal
+    // Consulta de Estado pelo Paciente
     if (checkStatusForm) {
         checkStatusForm.addEventListener("submit", (e) => {
             e.preventDefault();
