@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("booking-section").classList.add("hidden");
             document.getElementById("payment-section").classList.remove("hidden");
 
-            // Inicia o temporizador regressivo de 45 minutos em movimento
             startPaymentTimer(2700);
         });
     }
@@ -108,24 +107,23 @@ document.addEventListener("DOMContentLoaded", () => {
                             <p><strong>Telemóvel:</strong> +244 ${found.phone}</p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 mt-2">
-                            <p class="text-xs font-bold text-blue-900 mb-1">📋 Resposta da Agenda / Observação do Administrador:</p>
+                            <p class="text-xs font-bold text-blue-900 mb-1">📋 Mensagem / Observação da Equipa APSAN:</p>
                             <p class="text-xs text-slate-700 whitespace-pre-line">${found.observation || 'Ainda sem observações detalhadas da equipa.'}</p>
                         </div>
                     </div>
                 `;
             } else {
-                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center py-2">Nenhum registo encontrado para este Nome e Telemóvel. Verifique se os dados estão corretos ou se concluiu a submissão.</p>`;
+                resultBox.innerHTML = `<p class="text-rose-600 text-xs font-semibold text-center py-2">Nenhum registo encontrado para este Nome e Telemóvel. Verifique se os dados estão corretos.</p>`;
             }
         });
     }
 
-    const adminTableBody = document.getElementById("admin-table-body");
-    if (adminTableBody) {
+    if (document.getElementById("admin-table-body")) {
         renderAdminTable();
     }
 });
 
-// Temporizador Regressivo Dinâmico (45 minutos para 00)
+// Temporizador Regressivo Dinâmico (45 minutos)
 function startPaymentTimer(durationInSeconds) {
     let timer = durationInSeconds;
     const display = document.getElementById("timer-display");
@@ -179,17 +177,17 @@ function renderAdminTable() {
                 <span class="text-slate-500">Data: ${booking.date}</span>
             </td>
             <td class="p-4 align-top">
-                <button onclick="viewReceipt('${encodeURIComponent(booking.receiptData || '')}', '${booking.receiptName || 'Ficheiro'}')" class="text-blue-600 underline text-xs font-semibold">
+                <button type="button" onclick="viewReceipt('${encodeURIComponent(booking.receiptData || '')}', '${booking.receiptName || 'Ficheiro'}')" class="text-blue-600 underline text-xs font-semibold">
                     ${booking.receiptName || 'Ver Ficheiro'}
                 </button>
             </td>
             <td class="p-4 align-top">
-                <textarea id="obs-${index}" rows="3" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Escreva livremente a resposta sobre a agenda, data ou instruções para o paciente...">${booking.observation || ''}</textarea>
+                <textarea id="obs-${index}" rows="3" class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Escreva aqui a mensagem ou instrução para o paciente...">${booking.observation || ''}</textarea>
             </td>
             <td class="p-4 align-top space-y-2 whitespace-nowrap">
-                <button onclick="saveAdminResponse(${index}, 'Aprovado')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Aprovar e Enviar</button>
-                <button onclick="saveAdminResponse(${index}, 'Rejeitado')" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Rejeitar / Ajustar</button>
-                <button onclick="deleteBooking(${index})" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Eliminar</button>
+                <button type="button" onclick="saveAdminResponse(${index}, 'Aprovado')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Aprovar e Enviar</button>
+                <button type="button" onclick="saveAdminResponse(${index}, 'Rejeitado')" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Rejeitar / Ajustar</button>
+                <button type="button" onclick="deleteBooking(${index})" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">Eliminar</button>
             </td>
         `;
         adminTableBody.appendChild(row);
@@ -198,14 +196,19 @@ function renderAdminTable() {
 
 function saveAdminResponse(index, newStatus) {
     let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-    const obsText = document.getElementById(`obs-${index}`).value.trim();
+    const obsTextNode = document.getElementById(`obs-${index}`);
+    
+    if (obsTextNode) {
+        const obsText = obsTextNode.value.trim();
+        allBookings[index].status = newStatus;
+        allBookings[index].observation = obsText;
 
-    allBookings[index].status = newStatus;
-    allBookings[index].observation = obsText;
-
-    localStorage.setItem("allBookings", JSON.stringify(allBookings));
-    alert(`Resposta guardada com sucesso! O estado (${newStatus}) e a observação já estão visíveis para o paciente.`);
-    renderAdminTable();
+        localStorage.setItem("allBookings", JSON.stringify(allBookings));
+        alert(`Mensagem e estado (${newStatus}) guardados com sucesso! O paciente já pode consultá-los no site.`);
+        renderAdminTable();
+    } else {
+        alert("Erro ao localizar o campo de texto da observação.");
+    }
 }
 
 function viewReceipt(dataUrl, fileName) {
