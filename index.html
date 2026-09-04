@@ -6,17 +6,17 @@
     <title>APSAN, LDA — Consultas Médicas e Intermediação de Saúde na Namíbia</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen relative flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen relative flex flex-col justify-between selection:bg-blue-900 selection:text-white">
 
-    <!-- Fundo de Saúde com Imagem Clara e Brilhante -->
-    <div class="fixed inset-0 z-[-1] overflow-hidden flex items-center justify-center bg-slate-200">
-        <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?q=80&w=1920&auto=format&fit=crop" alt="Ambiente Hospitalar Luminoso e Claro" class="w-full h-full object-cover filter brightness-[1.05] contrast-100 scale-100">
-        <div class="absolute inset-0 bg-gradient-to-tr from-white/90 via-slate-100/80 to-slate-200/90 backdrop-blur-[1px]"></div>
+    <!-- Fundo de Saúde com Imagem Clara, Brilhante e Visível (Sem Transparência Excessiva) -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden flex items-center justify-center bg-slate-100">
+        <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?q=80&w=1920&auto=format&fit=crop" alt="Ambiente Hospitalar Luminoso e Claro" class="w-full h-full object-cover filter brightness-[1.15] contrast-[1.05]">
+        <div class="absolute inset-0 bg-white/75 backdrop-blur-[0.5px]"></div>
     </div>
 
     <div>
-        <!-- Barra de Anúncio Superior Dinâmica -->
-        <div class="bg-emerald-600 text-white py-2.5 overflow-hidden whitespace-nowrap text-xs font-semibold tracking-wide shadow-md">
+        <!-- Barra de Anúncio Superior Dinâmica (Azul Escuro) -->
+        <div class="bg-blue-900 text-white py-2.5 overflow-hidden whitespace-nowrap text-xs font-semibold tracking-wide shadow-md">
             <div class="inline-block animate-[marquee_28s_linear_infinite]">
                 <span>✨ Referenciação e marcação de consultas médicas na Namíbia com total segurança &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp; </span>
                 <span>Parceiros clínicos de excelência em Oshikango, Oshakati, Ondangua e Ongwediva &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp; </span>
@@ -25,20 +25,20 @@
         </div>
 
         <!-- Header Profissional -->
-        <header class="bg-white/90 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <header class="bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-40 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 py-3.5 flex justify-between items-center">
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="showPage('landing')">
-                    <div class="bg-emerald-100 border border-emerald-300 p-2 rounded-xl text-emerald-700 shadow-inner">
+                    <div class="bg-blue-50 border border-blue-200 p-2 rounded-xl text-blue-900 shadow-inner">
                         <span class="text-xl">🏥</span>
                     </div>
                     <div>
-                        <h1 class="text-base md:text-lg font-black tracking-wider text-slate-900">APSAN, <span class="text-emerald-600 font-light">LDA</span></h1>
+                        <h1 class="text-base md:text-lg font-black tracking-wider text-slate-900">APSAN, <span class="text-blue-900 font-light">LDA</span></h1>
                         <p class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Saúde & Intermediação Clínica</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
                     <button onclick="showPage('landing')" id="nav-btn-home" class="text-xs bg-slate-900 text-white px-3.5 py-2 rounded-xl font-bold transition-all shadow-md">Início / Sobre</button>
-                    <button onclick="showPage('booking')" id="nav-btn-app" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500 px-4 py-2 rounded-xl font-extrabold transition-all shadow-md">Portal de Marcações</button>
+                    <button onclick="showPage('booking')" id="nav-btn-app" class="text-xs bg-blue-900 hover:bg-blue-800 text-white border border-blue-800 px-4 py-2 rounded-xl font-extrabold transition-all shadow-md">Portal de Marcações</button>
                     <a href="admin.html" class="text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 px-3.5 py-2 rounded-xl font-bold transition-all shadow-sm flex items-center gap-1.5">
                         <span>🔐</span> Equipa
                     </a>
@@ -54,15 +54,15 @@
                 
                 <!-- Hero Principal de Boas-Vindas -->
                 <div class="bg-white/95 backdrop-blur-2xl p-8 md:p-12 rounded-3xl shadow-xl border border-slate-200 text-center relative overflow-hidden">
-                    <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-100/60 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -right-12 -top-12 w-48 h-48 bg-blue-100/60 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-sky-100/60 rounded-full blur-3xl pointer-events-none"></div>
                     
-                    <span class="inline-block bg-emerald-50 text-emerald-700 text-xs font-bold px-4 py-1.5 rounded-full border border-emerald-200 mb-5 tracking-wider uppercase shadow-sm">Excelência em Cuidados de Saúde</span>
+                    <span class="inline-block bg-blue-50 text-blue-900 text-xs font-bold px-4 py-1.5 rounded-full border border-blue-200 mb-5 tracking-wider uppercase shadow-sm">Excelência em Cuidados de Saúde</span>
                     <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight leading-tight">Cuidar da sua Saúde com Acesso Rápido na Namíbia</h2>
                     <p class="text-slate-600 text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed mb-8">A APSAN, LDA é o seu elo de confiança para marcação de consultas, exames e acompanhamento médico especializado nas melhores unidades clínicas da região fronteiriça.</p>
                     
                     <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <button onclick="showPage('booking')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-8 py-4 rounded-2xl transition-all shadow-lg text-base flex items-center justify-center gap-2 border border-emerald-500">
+                        <button onclick="showPage('booking')" class="bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-8 py-4 rounded-2xl transition-all shadow-lg text-base flex items-center justify-center gap-2 border border-blue-800">
                             <span>📅</span> Aceder ao Portal de Marcações
                         </button>
                         <a href="#como-funciona" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-4 rounded-2xl transition-all shadow-sm border border-slate-300 flex items-center justify-center gap-2">
@@ -74,19 +74,19 @@
                 <!-- Secção: O Nosso Objetivo -->
                 <div id="como-funciona" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white/95 backdrop-blur-xl border border-slate-200 p-6 rounded-3xl shadow-lg space-y-3">
-                        <div class="w-12 h-12 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-700 text-xl font-bold shadow-inner">🎯</div>
+                        <div class="w-12 h-12 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center text-blue-900 text-xl font-bold shadow-inner">🎯</div>
                         <h3 class="text-base font-bold text-slate-900 tracking-wide">O Nosso Objetivo</h3>
                         <p class="text-xs text-slate-600 leading-relaxed font-light">Eliminar barreiras burocráticas e logísticas no acesso a cuidados médicos de alta qualidade na Namíbia para cidadãos em Angola, proporcionando agendamentos seguros, transparentes e orientados.</p>
                     </div>
 
                     <div class="bg-white/95 backdrop-blur-xl border border-slate-200 p-6 rounded-3xl shadow-lg space-y-3">
-                        <div class="w-12 h-12 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-700 text-xl font-bold shadow-inner">🤝</div>
+                        <div class="w-12 h-12 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center text-blue-900 text-xl font-bold shadow-inner">🤝</div>
                         <h3 class="text-base font-bold text-slate-900 tracking-wide">Intermediação Segura</h3>
                         <p class="text-xs text-slate-600 leading-relaxed font-light">Gerimos todo o processo de marcação com clínicas privadas de referência (Oshakati, Ongwediva, Ondangua e Oshikango), garantindo suporte completo desde a seleção da especialidade até à validação do pagamento.</p>
                     </div>
 
                     <div class="bg-white/95 backdrop-blur-xl border border-slate-200 p-6 rounded-3xl shadow-lg space-y-3">
-                        <div class="w-12 h-12 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-700 text-xl font-bold shadow-inner">⚡</div>
+                        <div class="w-12 h-12 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center text-blue-900 text-xl font-bold shadow-inner">⚡</div>
                         <h3 class="text-base font-bold text-slate-900 tracking-wide">Processo Ágil</h3>
                         <p class="text-xs text-slate-600 leading-relaxed font-light">Submeta os seus dados em poucos cliques, efetue o pagamento seguro por Transferência BFA ou Multicaixa Express e acompanhe o estado da sua marcação em tempo real através da nossa plataforma.</p>
                     </div>
@@ -98,7 +98,7 @@
                         <h3 class="text-xl font-black text-slate-900 mb-2">Pronto para marcar a sua consulta médica?</h3>
                         <p class="text-xs text-slate-600 font-light max-w-xl">Entre já no nosso portal de agendamento interativo e escolha a unidade clínica e o especialista ideal para o seu atendimento.</p>
                     </div>
-                    <button onclick="showPage('booking')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3.5 rounded-2xl transition-all shadow-lg text-sm shrink-0 border border-emerald-500">
+                    <button onclick="showPage('booking')" class="bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-6 py-3.5 rounded-2xl transition-all shadow-lg text-sm shrink-0 border border-blue-800">
                         Marcar Consulta Agora →
                     </button>
                 </div>
@@ -110,7 +110,7 @@
                 
                 <!-- Hero Card do Portal -->
                 <div class="bg-white/95 backdrop-blur-2xl p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 text-center relative overflow-hidden">
-                    <span class="inline-block bg-emerald-50 text-emerald-700 text-xs font-bold px-3.5 py-1.5 rounded-full border border-emerald-200 mb-3 tracking-wider uppercase shadow-sm">Portal Oficial de Marcações</span>
+                    <span class="inline-block bg-blue-50 text-blue-900 text-xs font-bold px-3.5 py-1.5 rounded-full border border-blue-200 mb-3 tracking-wider uppercase shadow-sm">Portal Oficial de Marcações</span>
                     <h2 class="text-2xl md:text-3xl font-black text-slate-900 mb-2 tracking-tight">Consultas Médicas na Namíbia</h2>
                     <p class="text-slate-600 text-xs md:text-sm max-w-xl mx-auto font-light leading-relaxed">Preencha o formulário abaixo para iniciar o seu agendamento clínico supervisionado pela APSAN.</p>
                 </div>
@@ -118,15 +118,15 @@
                 <!-- Secção: Consultar Estado -->
                 <div class="bg-white/95 backdrop-blur-2xl border border-slate-200 p-6 md:p-8 rounded-3xl shadow-xl text-slate-800 relative">
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="bg-emerald-50 p-2 rounded-xl text-emerald-700 border border-emerald-200">🔍</div>
+                        <div class="bg-blue-50 p-2 rounded-xl text-blue-900 border border-blue-200">🔍</div>
                         <h3 class="text-lg font-bold text-slate-900 tracking-wide">Consulte o Estado da sua Marcação</h3>
                     </div>
                     <p class="text-xs text-slate-600 mb-5 leading-relaxed">Insira os seus dados para verificar em tempo real o andamento e as orientações da nossa equipa administrativa:</p>
                     
                     <form id="check-status-form" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                        <input type="text" id="check-name" placeholder="Nome Completo" required class="bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all shadow-inner">
-                        <input type="text" id="check-phone" placeholder="Telemóvel (ex: 944403093)" required class="bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all shadow-inner">
-                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-2xl text-sm transition-all shadow-md border border-emerald-500">Consultar Estado</button>
+                        <input type="text" id="check-name" placeholder="Nome Completo" required class="bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-900 focus:outline-none transition-all shadow-inner">
+                        <input type="text" id="check-phone" placeholder="Telemóvel (ex: 944403093)" required class="bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-900 focus:outline-none transition-all shadow-inner">
+                        <button type="submit" class="bg-blue-900 hover:bg-blue-800 text-white font-extrabold py-3.5 rounded-2xl text-sm transition-all shadow-md border border-blue-800">Consultar Estado</button>
                     </form>
 
                     <div id="status-result-box" class="hidden bg-slate-50 text-slate-800 border border-slate-300 p-5 rounded-2xl text-sm shadow-md"></div>
@@ -135,7 +135,7 @@
                 <!-- Step 1: Formulário de Agendamento -->
                 <div id="booking-section" class="bg-white/95 backdrop-blur-2xl p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200">
                     <div class="flex items-center gap-3 mb-6 border-b border-slate-200 pb-4">
-                        <div class="bg-emerald-50 p-2 rounded-xl text-emerald-700 border border-emerald-200">📋</div>
+                        <div class="bg-blue-50 p-2 rounded-xl text-blue-900 border border-blue-200">📋</div>
                         <h3 class="text-lg font-bold text-slate-900 tracking-wide">1. Dados do Paciente, Região e Especialidade</h3>
                     </div>
 
@@ -143,13 +143,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-2">Nome Completo</label>
-                                <input type="text" id="patient-name" required class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all shadow-inner">
+                                <input type="text" id="patient-name" required class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-900 focus:outline-none transition-all shadow-inner">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-2">Telemóvel (Angola +244)</label>
                                 <div class="flex shadow-inner">
                                     <span class="bg-slate-100 border border-r-0 border-slate-300 rounded-l-2xl px-4 py-3.5 text-slate-500 text-sm font-bold"> +244</span>
-                                    <input type="text" id="patient-phone" placeholder="9XX XXX XXX" required class="w-full bg-slate-50 border border-slate-300 rounded-r-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+                                    <input type="text" id="patient-phone" placeholder="9XX XXX XXX" required class="w-full bg-slate-50 border border-slate-300 rounded-r-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-900 focus:outline-none transition-all">
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-2">Região / Localidade</label>
-                                <select id="region-select" class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all shadow-inner">
+                                <select id="region-select" class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-900 focus:outline-none transition-all shadow-inner">
                                     <option value="Oshakati (Até 60km de Oshikango)">Oshakati (Até 60km de Oshikango)</option>
                                     <option value="Ondangua">Ondangua</option>
                                     <option value="Ongwediva">Ongwediva</option>
@@ -166,7 +166,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-2">Clínica / Hospital</label>
-                                <select id="clinic-select" class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all shadow-inner">
+                                <select id="clinic-select" class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-900 focus:outline-none transition-all shadow-inner">
                                     <option value="Oshakati Medical Centre">Oshakati Medical Centre</option>
                                     <option value="Ongwediva Medpark">Ongwediva Medpark</option>
                                     <option value="Ondangua Private Clinic">Ondangua Private Clinic</option>
@@ -175,7 +175,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-2">Especialidade / Médico</label>
-                                <select id="doctor-select" class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all shadow-inner">
+                                <select id="doctor-select" class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-900 focus:outline-none transition-all shadow-inner">
                                     <option value="Dr. Nashandi (Clínico Geral)">Dr. Nashandi (Clínico Geral)</option>
                                     <option value="Dra. Shikongo (Pediatria)">Dra. Shikongo (Pediatria)</option>
                                     <option value="Dr. Van Wyk (Cardiologia)">Dr. Van Wyk (Cardiologia)</option>
@@ -186,10 +186,10 @@
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-2">Data Pretendida para a Consulta</label>
-                            <input type="date" id="appointment-date" required class="w-full md:w-1/2 bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all shadow-inner">
+                            <input type="date" id="appointment-date" required class="w-full md:w-1/2 bg-slate-50 border border-slate-300 rounded-2xl p-3.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-900 focus:outline-none transition-all shadow-inner">
                         </div>
 
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 rounded-2xl transition-all shadow-lg text-base border border-emerald-500">
+                        <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-extrabold py-4 rounded-2xl transition-all shadow-lg text-base border border-blue-800">
                             Avançar para Escolha de Pagamento
                         </button>
                     </form>
@@ -202,13 +202,13 @@
                     <div class="mb-6 rounded-2xl overflow-hidden border border-slate-200 shadow-md relative h-40 md:h-48">
                         <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=1200&auto=format&fit=crop" alt="Multicaixa ATM" class="w-full h-full object-cover filter brightness-[1.05]">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent flex flex-col justify-end p-5">
-                            <span class="bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md uppercase tracking-widest w-fit mb-1 shadow-sm">Etapa de Liquidação</span>
+                            <span class="bg-blue-900 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md uppercase tracking-widest w-fit mb-1 shadow-sm">Etapa de Liquidação</span>
                             <h3 class="text-lg md:text-xl font-bold text-white tracking-wide">2. Resumo de Custos e Seleção de Pagamento</h3>
                             <p class="text-xs text-slate-200 mt-0.5 leading-relaxed">Conclua o seu agendamento escolhendo uma das vias de pagamento abaixo.</p>
                         </div>
                     </div>
 
-                    <!-- Caixa de Valores com Design Executivo (Valores Verde) -->
+                    <!-- Caixa de Valores com Design Executivo (Valores Verde mantidos conforme pedido) -->
                     <div class="bg-slate-50 border border-slate-300 p-5 rounded-2xl mb-6 shadow-md space-y-3">
                         <p class="font-bold text-slate-900 text-xs uppercase tracking-widest border-b border-slate-200 pb-2">Demonstração de Valores:</p>
                         <div class="flex justify-between items-center text-sm text-slate-600">
@@ -287,9 +287,9 @@
                     <form id="payment-form" class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-widest text-slate-600 mb-2">Anexar Comprovativo de Pagamento (Talão ou PDF)</label>
-                            <input type="file" id="receipt-file" accept="image/*,application/pdf" required class="w-full border border-slate-300 rounded-2xl p-3.5 bg-slate-50 text-sm text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 transition-all cursor-pointer shadow-inner">
+                            <input type="file" id="receipt-file" accept="image/*,application/pdf" required class="w-full border border-slate-300 rounded-2xl p-3.5 bg-slate-50 text-sm text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-900 file:text-white hover:file:bg-blue-800 transition-all cursor-pointer shadow-inner">
                         </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 rounded-2xl transition-all shadow-lg text-base flex items-center justify-center space-x-2 border border-emerald-500">
+                        <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-extrabold py-4 rounded-2xl transition-all shadow-lg text-base flex items-center justify-center space-x-2 border border-blue-800">
                             <span>✅ Submeter Comprovativo com Segurança</span>
                         </button>
                     </form>
@@ -297,10 +297,10 @@
 
                 <!-- Step 3: Confirmação -->
                 <div id="status-section" class="hidden bg-white/95 backdrop-blur-2xl p-8 rounded-3xl shadow-xl border border-slate-200 text-center py-12">
-                    <div class="w-16 h-16 bg-emerald-100 border border-emerald-300 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-700 text-3xl shadow-inner">✓</div>
+                    <div class="w-16 h-16 bg-blue-100 border border-blue-300 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-900 text-3xl shadow-inner">✓</div>
                     <h3 class="text-2xl font-black text-slate-900 mb-3">Comprovativo Submetido com Sucesso!</h3>
                     <p class="text-slate-600 max-w-md mx-auto mb-6 text-sm leading-relaxed">A nossa equipa já recebeu o seu talão e iniciou o processo de validação. Pode consultar o estado atualizado a qualquer momento usando o seu nome e telemóvel no topo da página.</p>
-                    <button onclick="location.reload()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 rounded-2xl text-sm font-bold shadow-lg transition-all border border-emerald-500">Fazer Nova Marcação</button>
+                    <button onclick="location.reload()" class="bg-blue-900 hover:bg-blue-800 text-white px-8 py-3.5 rounded-2xl text-sm font-bold shadow-lg transition-all border border-blue-800">Fazer Nova Marcação</button>
                 </div>
 
             </div>
@@ -308,13 +308,13 @@
         </main>
     </div>
 
-    <!-- Rodapé -->
-    <footer class="bg-white text-slate-500 text-center py-5 text-xs border-t border-slate-200 relative z-10 font-medium shadow-sm">
+    <!-- Rodapé (Azul Escuro Conforme Pedido) -->
+    <footer class="bg-blue-900 text-white text-center py-5 text-xs border-t border-blue-800 relative z-10 font-medium shadow-sm">
         <p>2026 APSAN, LDA Todos os direitos reservados</p>
     </footer>
 
-    <!-- Botão Flutuante do WhatsApp -->
-    <a href="https://wa.me/244944403093?text=Olá,%20preciso%20de%20ajuda%20com%20o%20pagamento%20da%20minha%20consulta%20na%20APSAN." target="_blank" title="Falar pelo WhatsApp" class="fixed bottom-12 right-6 z-50 bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 border border-emerald-500">
+    <!-- Botão Flutuante do WhatsApp (Mantido com a cor original do WhatsApp) -->
+    <a href="https://wa.me/244944403093?text=Olá,%20preciso%20de%20ajuda%20com%20o%20pagamento%20da%20minha%20consulta%20na%20APSAN." target="_blank" title="Falar pelo WhatsApp" class="fixed bottom-12 right-6 z-50 bg-[#25D366] hover:bg-[#20ba5a] text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 border border-[#25D366]">
         <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24">
             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.198-.198.347-.764.966-.937 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
         </svg>
@@ -346,7 +346,7 @@
                 landingEl.classList.remove('hidden');
                 bookingEl.classList.add('hidden');
                 btnHome.className = "text-xs bg-slate-900 text-white px-3.5 py-2 rounded-xl font-bold transition-all shadow-md";
-                btnApp.className = "text-xs bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500 px-4 py-2 rounded-xl font-extrabold transition-all shadow-md";
+                btnApp.className = "text-xs bg-blue-900 hover:bg-blue-800 text-white border border-blue-800 px-4 py-2 rounded-xl font-extrabold transition-all shadow-md";
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else if (pageId === 'booking') {
                 landingEl.classList.add('hidden');
@@ -443,10 +443,10 @@
                 const originalText = buttonElement.innerText;
                 buttonElement.innerText = 'Copiado!';
                 buttonElement.classList.remove('bg-slate-100', 'text-slate-800', 'bg-amber-400', 'text-slate-950');
-                buttonElement.classList.add('bg-emerald-600', 'text-white');
+                buttonElement.classList.add('bg-blue-900', 'text-white');
                 setTimeout(() => {
                     buttonElement.innerText = originalText;
-                    buttonElement.classList.remove('bg-emerald-600', 'text-white');
+                    buttonElement.classList.remove('bg-blue-900', 'text-white');
                     if (elementId === 'mc-text') {
                         buttonElement.classList.add('bg-amber-400', 'text-slate-950');
                     } else {
@@ -500,7 +500,7 @@
                     <p><strong>Clínica:</strong> ${found.clinic} (${found.region})</p>
                     <p><strong>Médico:</strong> ${found.doctor}</p>
                     <p><strong>Data Pretendida:</strong> ${found.date}</p>
-                    <p class="mt-2"><strong>Estado Atual:</strong> <span class="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded font-bold">${found.status}</span></p>
+                    <p class="mt-2"><strong>Estado Atual:</strong> <span class="bg-blue-100 text-blue-900 px-2.5 py-0.5 rounded font-bold">${found.status}</span></p>
                 `;
             } else {
                 resultBox.innerHTML = `
