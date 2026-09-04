@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Passo 2: Submeter o comprovativo de pagamento (Corrigido para garantir avanço imediato)
+    // Passo 2: Submeter o comprovativo de pagamento
     if (paymentForm) {
         paymentForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (paymentTimerInterval) clearInterval(paymentTimerInterval);
 
-            // Função interna para guardar e avançar o ecrã
             const finalizeSubmission = (fileName, fileData) => {
                 currentBooking.receiptName = fileName;
                 currentBooking.receiptData = fileData;
@@ -67,12 +66,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("allBookings", JSON.stringify(allBookings));
                 localStorage.setItem("currentBooking", JSON.stringify(currentBooking));
 
-                // Esconde a secção de pagamento e mostra a de sucesso
                 document.getElementById("payment-section").classList.add("hidden");
                 document.getElementById("status-section").classList.remove("hidden");
             };
 
-            // Se o utilizador escolheu um ficheiro, tenta ler. Se falhar ou não houver, avança na mesma.
             if (fileInput && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
