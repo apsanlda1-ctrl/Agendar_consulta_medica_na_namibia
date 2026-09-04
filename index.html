@@ -134,6 +134,14 @@
 
             <h3 class="text-lg font-bold text-blue-950 mb-3 border-b pb-3">2. Resumo de Custos e Pagamento</h3>
             
+            <!-- Passo a passo visual com ícones numerados -->
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-5 text-xs text-blue-900 space-y-1.5">
+                <p class="font-bold mb-1">📌 Passo a passo para efetuar o pagamento:</p>
+                <p>1️⃣ Efetue o pagamento do valor total através do BFA ou Multicaixa Express.</p>
+                <p>2️⃣ Guarde o talão de transferência ou tire uma captura de ecrã (screenshot).</p>
+                <p>3️⃣ Anexe o ficheiro abaixo e clique em "Submeter Comprovativo".</p>
+            </div>
+
             <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6 text-sm space-y-2 text-slate-700">
                 <p class="font-semibold text-amber-900">Detalhe dos Valores:</p>
                 <div class="grid grid-cols-2 gap-2 border-b border-amber-200 pb-2">
@@ -150,10 +158,35 @@
                 </div>
             </div>
 
-            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-6 text-sm space-y-2">
-                <p class="font-semibold text-blue-900 mb-1">Dados Bancários da APSAN, LDA:</p>
-                <p><strong>Transferência Bancária (IBAN):</strong> <span class="font-mono bg-white px-2.5 py-1 rounded-lg border border-blue-200 select-all font-semibold">AO06 0000 635030 2130157</span></p>
-                <p><strong>Multicaixa Express (Telemóvel):</strong> <span class="font-mono bg-white px-2.5 py-1 rounded-lg border border-blue-200 select-all font-semibold">931057760</span></p>
+            <!-- Abas interativas para alternar entre Transferência Bancária (IBAN BFA) e Multicaixa Express -->
+            <div class="flex space-x-2 mb-3">
+                <button type="button" onclick="switchPaymentTab('iban')" id="tab-iban-btn" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm transition-all">🏦 Transferência BFA</button>
+                <button type="button" onclick="switchPaymentTab('multicaixa')" id="tab-mc-btn" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all">📱 Multicaixa Express</button>
+            </div>
+
+            <!-- Bloco de Dados Bancários com Cópia Direta e Indicação do BFA -->
+            <div class="bg-slate-900 text-white p-4 rounded-xl mb-5 space-y-3 shadow-inner">
+                <div id="content-iban" class="space-y-1">
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>Banco Recipient: <strong class="text-white">BFA (Banco de Fomento Angola)</strong></span>
+                        <span class="bg-blue-600 text-[10px] px-2 py-0.5 rounded text-white font-bold">IBAN</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-800 p-2.5 rounded-lg border border-slate-700">
+                        <span id="iban-text" class="font-mono text-xs md:text-sm text-emerald-400 tracking-wider">AO06 0000 635030 2130157</span>
+                        <button type="button" onclick="copyToClipboard('iban-text', this)" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded transition-all shadow">Copiar</button>
+                    </div>
+                </div>
+
+                <div id="content-multicaixa" class="space-y-1 hidden">
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>Método: <strong class="text-white">Multicaixa Express</strong></span>
+                        <span class="bg-emerald-600 text-[10px] px-2 py-0.5 rounded text-white font-bold">Telemóvel</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-800 p-2.5 rounded-lg border border-slate-700">
+                        <span id="mc-text" class="font-mono text-sm text-emerald-400 tracking-wider">+244 931057760</span>
+                        <button type="button" onclick="copyToClipboard('mc-text', this)" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded transition-all shadow">Copiar</button>
+                    </div>
+                </div>
             </div>
 
             <form id="payment-form" class="space-y-4">
@@ -161,10 +194,17 @@
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Anexar Comprovativo de Pagamento (Talão)</label>
                     <input type="file" id="receipt-file" accept="image/*,application/pdf" required class="w-full border border-slate-300 rounded-xl p-3 bg-slate-50 text-sm">
                 </div>
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-base">
-                    Submeter Comprovativo
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-base flex items-center justify-center space-x-2">
+                    <span>✅ Submeter Comprovativo</span>
                 </button>
             </form>
+
+            <!-- Botão direto de suporte via WhatsApp para assistência rápida -->
+            <div class="mt-4 pt-3 border-t border-slate-200 text-center">
+                <a href="https://wa.me/244931057760?text=Olá,%20preciso%20de%20ajuda%20com%20o%20pagamento%20da%20minha%20consulta%20na%20APSAN." target="_blank" class="text-xs text-emerald-600 hover:text-emerald-700 font-semibold inline-flex items-center space-x-1 transition-all hover:underline">
+                    <span>💬 Teve problemas no pagamento? Fale connosco no WhatsApp</span>
+                </a>
+            </div>
         </div>
 
         <!-- Step 3: Confirmação de Submissão -->
