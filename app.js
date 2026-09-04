@@ -170,6 +170,44 @@ function startPaymentTimer(durationInSeconds) {
     }, 1000);
 }
 
+// Funções Auxiliares para Abas e Cópia Rápida com Feedback Visual ("Copiado! ✓")
+function switchPaymentTab(type) {
+    const ibanBtn = document.getElementById("tab-iban-btn");
+    const mcBtn = document.getElementById("tab-mc-btn");
+    const ibanContent = document.getElementById("content-iban");
+    const mcContent = document.getElementById("content-multicaixa");
+
+    if (type === 'iban') {
+        ibanBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm transition-all";
+        mcBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all";
+        ibanContent.classList.remove("hidden");
+        mcContent.classList.add("hidden");
+    } else {
+        mcBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm transition-all";
+        ibanBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all";
+        mcContent.classList.remove("hidden");
+        ibanContent.classList.add("hidden");
+    }
+}
+
+function copyToClipboard(elementId, btnElement) {
+    const textToCopy = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalText = btnElement.innerText;
+        btnElement.innerText = "Copiado! ✓";
+        btnElement.classList.remove("bg-blue-600", "hover:bg-blue-700");
+        btnElement.classList.add("bg-emerald-600");
+        
+        setTimeout(() => {
+            btnElement.innerText = originalText;
+            btnElement.classList.remove("bg-emerald-600");
+            btnElement.classList.add("bg-blue-600", "hover:bg-blue-700");
+        }, 2000);
+    }).catch(err => {
+        alert("Erro ao copiar. Selecione o texto manualmente.");
+    });
+}
+
 function renderAdminTable() {
     const adminTableBody = document.getElementById("admin-table-body");
     const noData = document.getElementById("no-data");
