@@ -167,7 +167,7 @@ function startPaymentTimer(durationInSeconds) {
     }, 1000);
 }
 
-// Funções Auxiliares para Abas com Logótipos e Cópia Rápida
+// Funções Auxiliares para Abas com Logótipos Coloridos e Cópia Rápida
 function switchPaymentTab(type) {
     const ibanBtn = document.getElementById("tab-iban-btn");
     const mcBtn = document.getElementById("tab-mc-btn");
