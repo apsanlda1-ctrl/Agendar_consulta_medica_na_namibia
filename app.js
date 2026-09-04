@@ -167,7 +167,7 @@ function startPaymentTimer(durationInSeconds) {
     }, 1000);
 }
 
-// Funções Auxiliares para Abas e Cópia Rápida com Feedback Visual ("Copiado! ✓")
+// Funções Auxiliares para Abas com Logótipos e Cópia Rápida
 function switchPaymentTab(type) {
     const ibanBtn = document.getElementById("tab-iban-btn");
     const mcBtn = document.getElementById("tab-mc-btn");
@@ -175,13 +175,13 @@ function switchPaymentTab(type) {
     const mcContent = document.getElementById("content-multicaixa");
 
     if (type === 'iban') {
-        ibanBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm transition-all";
-        mcBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all";
+        ibanBtn.className = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm transition-all flex items-center justify-center space-x-2";
+        mcBtn.className = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all flex items-center justify-center space-x-2";
         ibanContent.classList.remove("hidden");
         mcContent.classList.add("hidden");
     } else {
-        mcBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm transition-all";
-        ibanBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all";
+        mcBtn.className = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg bg-blue-900 text-white shadow-sm transition-all flex items-center justify-center space-x-2";
+        ibanBtn.className = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all flex items-center justify-center space-x-2";
         mcContent.classList.remove("hidden");
         ibanContent.classList.add("hidden");
     }
