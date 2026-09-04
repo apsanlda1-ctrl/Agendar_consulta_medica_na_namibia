@@ -135,13 +135,12 @@
                 </form>
             </div>
 
-            <!-- Step 2: Resumo Financeiro e Opções de Pagamento (Com GIF animado de ATM/Pagamento no topo) -->
+            <!-- Step 2: Resumo Financeiro e Opções de Pagamento -->
             <div id="payment-section" class="hidden bg-slate-900/90 backdrop-blur-2xl p-6 md:p-8 rounded-3xl shadow-2xl border border-white/20">
                 
                 <!-- Cabeçalho com Ilustração Animada (GIF) de Pagamento / ATM -->
                 <div class="flex flex-col md:flex-row items-center gap-4 mb-6 pb-6 border-b border-white/10 bg-slate-950/50 p-4 rounded-2xl border border-white/10 shadow-inner">
                     <div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 rounded-2xl overflow-hidden border-2 border-blue-500/40 shadow-lg bg-slate-900 flex items-center justify-center">
-                        <!-- GIF animado ilustrando ATM / Pagamento seguro -->
                         <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=300&auto=format&fit=crop" alt="Pagamento ATM" class="w-full h-full object-cover animate-pulse">
                     </div>
                     <div>
@@ -149,16 +148,8 @@
                             <span class="bg-emerald-600/30 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-md border border-emerald-500/30 uppercase tracking-widest">Etapa de Liquidação</span>
                         </div>
                         <h3 class="text-lg md:text-xl font-bold text-white tracking-wide">2. Resumo de Custos e Seleção de Pagamento</h3>
-                        <p class="text-xs text-slate-300 mt-1 leading-relaxed">Conclua o seu agendamento escolhendo uma das vias de pagamento abaixo. O cronômetro regressivo só começará a contar após a sua seleção.</p>
+                        <p class="text-xs text-slate-300 mt-1 leading-relaxed">Conclua o seu agendamento escolhendo uma das vias de pagamento abaixo.</p>
                     </div>
-                </div>
-
-                <!-- Instruções Passo a Passo -->
-                <div class="bg-blue-950/60 border border-blue-500/30 rounded-2xl p-4 mb-6 text-xs text-blue-200 space-y-2 backdrop-blur-md shadow-inner">
-                    <p class="font-bold text-blue-300 uppercase tracking-wider mb-1">📌 Instruções de Pagamento:</p>
-                    <p>1️⃣ Selecione abaixo a opção de pagamento pretendida (BFA ou Multicaixa Express) para revelar os dados e iniciar o cronômetro.</p>
-                    <p>2️⃣ Efetue a transferência e guarde o talão oficial ou captura de ecrã.</p>
-                    <p>3️⃣ Anexe o comprovativo e submeta antes que o tempo esgote.</p>
                 </div>
 
                 <!-- Caixa de Valores com Design Executivo -->
@@ -178,7 +169,7 @@
                     </div>
                 </div>
 
-                <!-- Abas de Pagamento (Ao clicar, o cronômetro é ativado/iniciado) -->
+                <!-- Abas de Pagamento -->
                 <div class="flex space-x-2 mb-4">
                     <button type="button" onclick="selectPaymentMethod('iban')" id="tab-iban-btn" class="flex-1 py-3 px-4 text-xs font-bold rounded-2xl bg-slate-800 text-slate-200 hover:bg-slate-700 transition-all flex items-center justify-center space-x-2 border border-white/20 shadow-md">
                         <span class="w-5 h-5 bg-white rounded-full flex items-center justify-center text-blue-900 text-[10px] font-black">🏦</span>
@@ -190,10 +181,10 @@
                     </button>
                 </div>
 
-                <!-- Bloco Bancário (Inicialmente oculto ou em estado de espera até o utilizador escolher uma opção) -->
+                <!-- Bloco Bancário (Inicialmente oculto) -->
                 <div id="payment-details-container" class="hidden bg-slate-950 border border-white/20 p-5 rounded-2xl mb-6 space-y-4 shadow-2xl relative">
                     
-                    <!-- Topo do Bloco: Relógio Regressivo (Começa a contar EXATAMENTE após escolher a opção) -->
+                    <!-- Topo do Bloco: Relógio Regressivo -->
                     <div class="bg-gradient-to-r from-rose-950/90 to-slate-900 border border-rose-500/40 p-3.5 rounded-xl flex items-center justify-between shadow-inner">
                         <div>
                             <h4 class="font-extrabold text-rose-200 text-xs flex items-center gap-1.5">
@@ -231,9 +222,9 @@
                     </div>
                 </div>
 
-                <!-- Mensagem de Orientação Inicial caso nenhuma opção tenha sido escolhida -->
+                <!-- Mensagem de Orientação Inicial Atualizada -->
                 <div id="payment-placeholder-msg" class="bg-slate-950/80 border border-dashed border-white/20 p-6 rounded-2xl text-center mb-6 text-slate-400 text-sm">
-                    👆 Por favor, clique numa das opções acima (<strong class="text-slate-200">Transferência BFA</strong> ou <strong class="text-slate-200">Multicaixa Express</strong>) para visualizar os dados de pagamento e iniciar o tempo de contagem regressiva.
+                    👆 Escolha a forma de pagamento acima (<strong class="text-slate-200">Transferência BFA</strong> ou <strong class="text-slate-200">Multicaixa Express</strong>) para visualizar os dados bancários e iniciar o tempo limite.
                 </div>
 
                 <!-- Formulário de Comprovativo -->
@@ -279,6 +270,161 @@
         }
     </style>
 
-    <script src="app.js"></script>
+    <!-- Script Integrado e Corrigido -->
+    <script>
+        let timerInterval = null;
+        let timeLeft = 45 * 60; // 45 minutos em segundos
+        let timerStarted = false;
+        let currentAppointmentData = null;
+
+        // Manipulação do Formulário de Marcação (Passo 1)
+        document.getElementById('appointment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            currentAppointmentData = {
+                name: document.getElementById('patient-name').value.trim(),
+                phone: document.getElementById('patient-phone').value.trim(),
+                region: document.getElementById('region-select').value,
+                clinic: document.getElementById('clinic-select').value,
+                doctor: document.getElementById('doctor-select').value,
+                date: document.getElementById('appointment-date').value,
+                createdAt: new Date().toISOString()
+            };
+
+            document.getElementById('booking-section').classList.add('hidden');
+            document.getElementById('payment-section').classList.remove('hidden');
+            document.getElementById('payment-section').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Função para Selecionar o Método de Pagamento e Iniciar o Cronômetro
+        function selectPaymentMethod(method) {
+            const detailsContainer = document.getElementById('payment-details-container');
+            const placeholderMsg = document.getElementById('payment-placeholder-msg');
+            
+            detailsContainer.classList.remove('hidden');
+            placeholderMsg.classList.add('hidden');
+
+            const contentIban = document.getElementById('content-iban');
+            const contentMulticaixa = document.getElementById('content-multicaixa');
+            const btnIban = document.getElementById('tab-iban-btn');
+            const btnMc = document.getElementById('tab-mc-btn');
+
+            if (method === 'iban') {
+                contentIban.classList.remove('hidden');
+                contentMulticaixa.classList.add('hidden');
+                
+                btnIban.className = "flex-1 py-3 px-4 text-xs font-bold rounded-2xl bg-blue-600 text-white transition-all flex items-center justify-center space-x-2 border border-blue-400 shadow-lg";
+                btnMc.className = "flex-1 py-3 px-4 text-xs font-bold rounded-2xl bg-slate-800 text-slate-200 hover:bg-slate-700 transition-all flex items-center justify-center space-x-2 border border-white/20 shadow-md";
+            } else if (method === 'multicaixa') {
+                contentMulticaixa.classList.remove('hidden');
+                contentIban.classList.add('hidden');
+                
+                btnMc.className = "flex-1 py-3 px-4 text-xs font-bold rounded-2xl bg-emerald-600 text-white transition-all flex items-center justify-center space-x-2 border border-emerald-400 shadow-lg";
+                btnIban.className = "flex-1 py-3 px-4 text-xs font-bold rounded-2xl bg-slate-800 text-slate-200 hover:bg-slate-700 transition-all flex items-center justify-center space-x-2 border border-white/20 shadow-md";
+            }
+
+            if (!timerStarted) {
+                timerStarted = true;
+                startCountdown();
+            }
+        }
+
+        // Lógica da Contagem Regressiva
+        function startCountdown() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    alert('O prazo limite para submissão do comprovativo expirou. Por favor, reinicie o processo de marcação.');
+                    location.reload();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const displayString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            const timerElement = document.getElementById('timer-display');
+            if (timerElement) {
+                timerElement.textContent = displayString;
+            }
+        }
+
+        // Função para Copiar dados para a área de transferência
+        function copyToClipboard(elementId, buttonElement) {
+            const textToCopy = document.getElementById(elementId).innerText.trim();
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = buttonElement.innerText;
+                buttonElement.innerText = 'Copiado!';
+                buttonElement.classList.remove('bg-blue-600', 'hover:bg-blue-500');
+                buttonElement.classList.add('bg-emerald-600');
+                setTimeout(() => {
+                    buttonElement.innerText = originalText;
+                    buttonElement.classList.remove('bg-emerald-600');
+                    buttonElement.classList.add('bg-blue-600', 'hover:bg-blue-500');
+                }, 2000);
+            }).catch(err => {
+                console.error('Erro ao copiar texto: ', err);
+            });
+        }
+
+        // Submissão do Comprovativo de Pagamento
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('receipt-file');
+            if (fileInput.files.length === 0) {
+                alert('Por favor, anexe o comprovativo de pagamento.');
+                return;
+            }
+
+            if (currentAppointmentData) {
+                currentAppointmentData.status = 'Em Validação pela Equipa';
+                currentAppointmentData.paymentDate = new Date().toISOString();
+                
+                let submissions = JSON.parse(localStorage.getItem('apsan_appointments') || '[]');
+                submissions.push(currentAppointmentData);
+                localStorage.setItem('apsan_appointments', JSON.stringify(submissions));
+            }
+
+            document.getElementById('payment-section').classList.add('hidden');
+            document.getElementById('status-section').classList.remove('hidden');
+            document.getElementById('status-section').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Funcionalidade de Consulta de Estado
+        document.getElementById('check-status-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchName = document.getElementById('check-name').value.trim().toLowerCase();
+            const searchPhone = document.getElementById('check-phone').value.trim();
+            const resultBox = document.getElementById('status-result-box');
+
+            let submissions = JSON.parse(localStorage.getItem('apsan_appointments') || '[]');
+            let found = submissions.find(item => item.name.toLowerCase() === searchName && item.phone === searchPhone);
+
+            resultBox.classList.remove('hidden');
+            if (found) {
+                resultBox.innerHTML = `
+                    <p class="font-bold text-emerald-400 mb-2">✓ Marcação Encontrada:</p>
+                    <p><strong>Paciente:</strong> ${found.name}</p>
+                    <p><strong>Clínica:</strong> ${found.clinic} (${found.region})</p>
+                    <p><strong>Médico:</strong> ${found.doctor}</p>
+                    <p><strong>Data Pretendida:</strong> ${found.date}</p>
+                    <p class="mt-2"><strong>Estado Atual:</strong> <span class="bg-blue-500/30 text-blue-300 px-2 py-0.5 rounded border border-blue-400/30 font-bold">${found.status}</span></p>
+                `;
+            } else {
+                resultBox.innerHTML = `
+                    <p class="text-rose-400 font-bold">⚠️ Nenhum registo encontrado para os dados informados.</p>
+                    <p class="text-xs text-slate-400 mt-1">Certifique-se de que inseriu exatamente o mesmo nome e telemóvel utilizados no agendamento.</p>
+                `;
+            }
+        });
+    </script>
 </body>
 </html>
